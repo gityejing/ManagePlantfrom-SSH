@@ -57,9 +57,15 @@ public class UserServiceImple implements UserService {
 	}
 
 	@Override
-	public PHCSMP_Staff finstaffById(int staffid) {
+	public PHCSMP_Staff findStaffById(int staffid) {
+
 		return userDao.findstaffById(staffid);
-		
 	}
+
+	// @Override
+	// public PHCSMP_Staff finstaffById(int staffid) {
+	// return userDao.findstaffById(staffid);
+	//
+	// }
 
 }

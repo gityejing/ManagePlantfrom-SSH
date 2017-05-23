@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import com.haifeiWu.service.BandService;
 @RequestMapping("/band")
 @Scope("prototype")
 public class BandManage_Action {
+	private Logger log = Logger.getLogger(BandManage_Action.class);
 
 	@Autowired
 	private BandService bandService; // 手环信息
@@ -31,17 +33,22 @@ public class BandManage_Action {
 	 */
 	@RequestMapping(value = "/bandFindAll")
 	public String bandFindAll(HttpServletRequest request) {
-		System.out.println("查找所有的手环信息");
-		List<PHCSMP_Band> bandCheckInfo = bandService.findAllBundInfor();
-		if (bandCheckInfo == null) {
-			return "NULL";// 处理空的情况
-		} else {
-			request.setAttribute("bandCheckInfo", bandCheckInfo);
-			for (PHCSMP_Band pHCSMP_Band : bandCheckInfo) {
-				System.out.println(pHCSMP_Band.toString());
+		try {
+			log.info("查找所有的手环信息");
+			List<PHCSMP_Band> bandCheckInfo = bandService.findAllBundInfor();
+			if (bandCheckInfo == null) {
+				return "NULL";// 处理空的情况
+			} else {
+				request.setAttribute("bandCheckInfo", bandCheckInfo);
+				for (PHCSMP_Band pHCSMP_Band : bandCheckInfo) {
+					log.info(pHCSMP_Band.toString());
+				}
 			}
+			return "WEB-INF/jsp/bandmanage/band";
+		} catch (Exception e) {
+			log.info("band findall" + e.getStackTrace());
+			return "null";
 		}
-		return "WEB-INF/jsp/bandmanage/band";
 
 	}
 
@@ -53,15 +60,20 @@ public class BandManage_Action {
 	 */
 	@RequestMapping(value = "/updateBand")
 	public String updateBand(BanfList bandList, HttpServletRequest request) {
-		System.out.println("进入手环初始化方法");
-		for (PHCSMP_Band pHCSMP_Band : bandList.getBandList()) {
-			System.out.println(pHCSMP_Band.getBand_ID());
-			System.out.println(pHCSMP_Band.getRemark());
-			System.out.println(pHCSMP_Band.getBand_Type());
-			bandService.updateRemarkAndTypeById(pHCSMP_Band.getRemark(),
-					pHCSMP_Band.getBand_Type(), pHCSMP_Band.getBand_ID());
+		try {
+			log.info("进入手环初始化方法");
+			for (PHCSMP_Band pHCSMP_Band : bandList.getBandList()) {
+				log.info(pHCSMP_Band.getBand_ID());
+				log.info(pHCSMP_Band.getRemark());
+				log.info(pHCSMP_Band.getBand_Type());
+				bandService.updateRemarkAndTypeById(pHCSMP_Band.getRemark(),
+						pHCSMP_Band.getBand_Type(), pHCSMP_Band.getBand_ID());
+			}
+			return bandFindAll(request);
+		} catch (Exception e) {
+			log.info("band updateBand" + e.getStackTrace());
+			return "null";
 		}
-		return bandFindAll(request);
 	}
 
 	public List<PHCSMP_Band> getBandList() {

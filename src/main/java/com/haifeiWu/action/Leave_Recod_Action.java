@@ -11,10 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.joda.time.DateTime;
-import org.joda.time.Hours;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -63,7 +60,7 @@ public class Leave_Recod_Action {
 	 * 序列化的字段
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private Logger log = Logger.getLogger(Leave_Recod_Action.class);
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -134,7 +131,8 @@ public class Leave_Recod_Action {
 		model.setLeave_Time(leavetime);
 		model.setTreatment_Time(leavetime);
 		// 获取staffID
-		Integer staff_ID = Integer.parseInt(request.getParameter("tempLeave_manager"));
+		Integer staff_ID = Integer.parseInt(request
+				.getParameter("tempLeave_manager"));
 		model.setStaff_ID(staff_ID);
 		request.setAttribute("staff_ID", staff_ID);
 		// // 设置离区 嫌疑人的ID
@@ -160,15 +158,14 @@ public class Leave_Recod_Action {
 		long nm = 1000 * 60;// 一分钟的毫秒数
 		diff = sd.parse(suspectInfor.getEnter_Time()).getTime()
 				- sd.parse(leavetime).getTime();
-		System.out.println(diff + "-----------------------------");
-		System.out.println(suspectInfor.getEnter_Time()
-				+ "-----------------------------");
-		System.out.println(leavetime + "-----------------------------");
+		log.info(diff + "-----------------------------");
+		log.info(suspectInfor.getEnter_Time() + "-----------------------------");
+		log.info(leavetime + "-----------------------------");
 		day = diff / nd;// 计算差多少天
 		hour = diff % nd / nh + day * 24;// 计算差多少小时
 		min = diff % nd % nh / nm + day * 24 * 60;// 计算差多少分钟
 		// 输出结果
-		System.out.println("时间相差：" + day + "天" + (hour - day * 24) + "小时"
+		log.info("时间相差：" + day + "天" + (hour - day * 24) + "小时"
 				+ (min - day * 24 * 60) + "分钟");
 		String detain = day + "天" + (hour - day * 24) + "小时"
 				+ (min - day * 24 * 60) + "分钟";
@@ -226,214 +223,217 @@ public class Leave_Recod_Action {
 
 	// 保存临时出区的信息
 	@RequestMapping(value = "/addtemp", method = RequestMethod.POST)
-	public String addTemporaryLeaveInfor(Temporary_Leave model,@RequestParam("suspectID") String suspectId,
-			//@RequestParam("tempLeave_Reason") String tempLeave_Reason,
+	public String addTemporaryLeaveInfor(Temporary_Leave model,
+			@RequestParam("suspectID") String suspectId,
+			// @RequestParam("tempLeave_Reason") String tempLeave_Reason,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-//		try {
-			// 根据ip找到房间
-			PHCSMP_Room room = roomService.findbyIp(request.getRemoteAddr());
-			// 获取前台表单数据，并封装成对象.
-			Temporary_Leave temporary_Leave = new Temporary_Leave(suspectId,
-					tempLeave_Time, model.getTempLeave_Reason(), return_Time,
-					model.getTempLeave_manager(),model.getReturn_staff_ID(), room.getRoom_ID(), model.getTempLeave_manager(),model.getReturn_manager());
-			// 如果是出区保存信息,是出区返回则更新信息
-			temporaryLeave = temporaryLeaveService
-					.IsTemporaryLeaveReturn(suspectId);
-			request.setAttribute("suspectId", suspectId);
-			request.setAttribute("staff_ID", model.getTempLeave_staff_ID());
-	System.out.println(temporaryLeave+"------------------------------------------------temporaryLeave");
-			// 临时离开返回
-			if (temporaryLeave != null) {
-				// 更新临时离开返回时间
-				Date date = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				String temporaryReturnTime = sdf.format(date);
+		// try {
+		// 根据ip找到房间
+		PHCSMP_Room room = roomService.findbyIp(request.getRemoteAddr());
+		// 获取前台表单数据，并封装成对象.
+		Temporary_Leave temporary_Leave = new Temporary_Leave(suspectId,
+				tempLeave_Time, model.getTempLeave_Reason(), return_Time,
+				model.getTempLeave_manager(), model.getReturn_staff_ID(),
+				room.getRoom_ID(), model.getTempLeave_manager(),
+				model.getReturn_manager());
+		// 如果是出区保存信息,是出区返回则更新信息
+		temporaryLeave = temporaryLeaveService
+				.IsTemporaryLeaveReturn(suspectId);
+		request.setAttribute("suspectId", suspectId);
+		request.setAttribute("staff_ID", model.getTempLeave_staff_ID());
+		log.info(temporaryLeave
+				+ "------------------------------------------------temporaryLeave");
+		// 临时离开返回
+		if (temporaryLeave != null) {
+			// 更新临时离开返回时间
+			Date date = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			String temporaryReturnTime = sdf.format(date);
 
-				temporaryLeaveService.updateReturnTime(temporaryReturnTime,
-						suspectId);
-				
-				temporaryLeaveService.updateManager(
-						temporaryLeave.getReturn_manager(),
-						suspectId);
-					
-				
-			} else {// 临时离开
-				// 设置临时离开时间
-				Date date = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				String temporaryLeaveTime = sdf.format(date);
-				temporary_Leave.setTempLeave_Time(temporaryLeaveTime);
-				temporaryLeaveService.saveTemporaryLeaveInfo(temporary_Leave);
-				
-				
-				
-			}
+			temporaryLeaveService.updateReturnTime(temporaryReturnTime,
+					suspectId);
 
-			return "redirect:/home/index";
-//		} catch (Exception e) {
-//			// response.getWriter()
-//			// .write("<script type='text/javascript'>alert('提交失败，请重新提交');</script>");
-//			// response.getWriter().flush();
-//			request.setAttribute("error", "error");
-//			return "redirect:/load";
-//		}
+			temporaryLeaveService.updateManager(
+					temporaryLeave.getReturn_manager(), suspectId);
+
+		} else {// 临时离开
+			// 设置临时离开时间
+			Date date = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			String temporaryLeaveTime = sdf.format(date);
+			temporary_Leave.setTempLeave_Time(temporaryLeaveTime);
+			temporaryLeaveService.saveTemporaryLeaveInfo(temporary_Leave);
+
+		}
+
+		return "redirect:/home/index";
+		// } catch (Exception e) {
+		// // response.getWriter()
+		// //
+		// .write("<script type='text/javascript'>alert('提交失败，请重新提交');</script>");
+		// // response.getWriter().flush();
+		// request.setAttribute("error", "error");
+		// return "redirect:/load";
+		// }
 	}
 
 	/* 加载界面信息 */
 	@RequestMapping(value = "/load")
 	public String loadInfor(@RequestParam("suspectID") String suspectId,
 			HttpServletRequest request) throws IOException {
-//		try {
-			// 异常处理的代码
-			if (request.getAttribute("leaveRecordLoadInfor") != null) {
-				PHCSMP_Leave_Record lr = (PHCSMP_Leave_Record) request
-						.getAttribute("leaveRecordLoadInfor");
-				request.setAttribute("PHCSMP_Leave_Record", lr);
-				// 这是异常处理
-				String tempLeave_Reason = (String) request
-						.getAttribute("tempLeave_Reason");
-				String staff_ID = (String) request.getAttribute("staff_ID");
-				String manager_name = (String) request
-						.getAttribute("manager_name");
+		// try {
+		// 异常处理的代码
+		if (request.getAttribute("leaveRecordLoadInfor") != null) {
+			PHCSMP_Leave_Record lr = (PHCSMP_Leave_Record) request
+					.getAttribute("leaveRecordLoadInfor");
+			request.setAttribute("PHCSMP_Leave_Record", lr);
+			// 这是异常处理
+			String tempLeave_Reason = (String) request
+					.getAttribute("tempLeave_Reason");
+			String staff_ID = (String) request.getAttribute("staff_ID");
+			String manager_name = (String) request.getAttribute("manager_name");
 
-				request.setAttribute("tempLeave_Reason", tempLeave_Reason);
-				request.setAttribute("staff_ID", staff_ID);
-				request.setAttribute("manager_name", manager_name);
-			}
+			request.setAttribute("tempLeave_Reason", tempLeave_Reason);
+			request.setAttribute("staff_ID", staff_ID);
+			request.setAttribute("manager_name", manager_name);
+		}
 
-			// 离区前提示前四个业务的完整性
-			// 根据嫌疑人id查找嫌疑人前四个业务的信息
-			sb = new StringBuilder("");
-			// 查入区登记信息
-			suspectInfor = suspectService.findBySuspetcId(suspectId);
-			// 并不需要再次进行完整性检查，只需读取数据，除一下即可
-			suspectComplete = (int) (suspectInfor.getFill_record()
-					/ (float) suspectInfor.getTotal_record() * 100);
-			if (suspectComplete != 100) {// 信息不完整
-				sb.append("入区登记信息填写不完整!  ");
-			}
+		// 离区前提示前四个业务的完整性
+		// 根据嫌疑人id查找嫌疑人前四个业务的信息
+		sb = new StringBuilder("");
+		// 查入区登记信息
+		suspectInfor = suspectService.findBySuspetcId(suspectId);
+		// 并不需要再次进行完整性检查，只需读取数据，除一下即可
+		suspectComplete = (int) (suspectInfor.getFill_record()
+				/ (float) suspectInfor.getTotal_record() * 100);
+		if (suspectComplete != 100) {// 信息不完整
+			sb.append("入区登记信息填写不完整!  ");
+		}
 
-			request.setAttribute("suspectInfor", suspectInfor);
-			request.setAttribute("suspectComplete", suspectComplete);
-			// 查人身检查信息
-			personalCheck = personalCheckService
-					.findInforBySuspetcId(suspectId);
-			if (personalCheck != null) {
-				personalCheckComplete = (int) (personalCheck.getFill_record()
-						/ (float) personalCheck.getTotal_record() * 100);
-				if (personalCheckComplete != 100) {// 信息不完整
-					sb.append("人身检查信息填写不完整!  ");
-				}
-			} else {
-				sb.append("该嫌疑人并未进行人身检查操作! ");
+		request.setAttribute("suspectInfor", suspectInfor);
+		request.setAttribute("suspectComplete", suspectComplete);
+		// 查人身检查信息
+		personalCheck = personalCheckService.findInforBySuspetcId(suspectId);
+		if (personalCheck != null) {
+			personalCheckComplete = (int) (personalCheck.getFill_record()
+					/ (float) personalCheck.getTotal_record() * 100);
+			if (personalCheckComplete != 100) {// 信息不完整
+				sb.append("人身检查信息填写不完整!  ");
 			}
-			request.setAttribute("personalCheckComplete", personalCheckComplete);
-			// 查信息采集信息
-			informationCollection = informationCollectionService
-					.findInforBySuspetcId(suspectId);
-			if (informationCollection != null) {
-				informationCollectionComplete = (int) (informationCollection
+		} else {
+			sb.append("该嫌疑人并未进行人身检查操作! ");
+		}
+		request.setAttribute("personalCheckComplete", personalCheckComplete);
+		// 查信息采集信息
+		informationCollection = informationCollectionService
+				.findInforBySuspetcId(suspectId);
+		if (informationCollection != null) {
+			informationCollectionComplete = (int) (informationCollection
+					.getFill_record()
+					/ (float) informationCollection.getTotal_record() * 100);
+			if (informationCollectionComplete != 100) {// 信息不完整
+				sb.append("信息采集信息填写不完整!  ");
+				log.info(sb + "3");
+			}
+		} else {
+			sb.append("该嫌疑人并未进行信息采集操作!  ");
+		}
+		request.setAttribute("informationCollectionComplete",
+				informationCollectionComplete);
+		// 查询问讯问信息
+		activityRecordList = activityRecordService
+				.findInforBySuspetcId(suspectId);
+		completeMap = new HashMap<Integer, Integer>();
+		if (activityRecordList != null) {
+			List activityRecordCompleteList = new ArrayList<>();
+			int j = 0;
+			int i = 1;
+			for (PHCSMP_Activity_Record Activity_Record : activityRecordList) {
+				int activityRecordComplete = (int) (Activity_Record
 						.getFill_record()
-						/ (float) informationCollection.getTotal_record() * 100);
-				if (informationCollectionComplete != 100) {// 信息不完整
-					sb.append("信息采集信息填写不完整!  ");
-					System.out.println(sb + "3");
+						/ (float) Activity_Record.getTotal_record() * 100);
+				completeMap.put(j, activityRecordComplete);
+				activityRecordCompleteList.add(activityRecordComplete);
+				request.setAttribute("activityRecordCompleteList",
+						activityRecordCompleteList);
+				j++;
+				if (activityRecordComplete != 100) {// 信息不完整
+					sb.append("询问讯问" + i + "信息填写不完整!  ");
+					i++;
 				}
-			} else {
-				sb.append("该嫌疑人并未进行信息采集操作!  ");
 			}
-			request.setAttribute("informationCollectionComplete",
-					informationCollectionComplete);
-			// 查询问讯问信息
-			activityRecordList = activityRecordService
-					.findInforBySuspetcId(suspectId);
-			completeMap = new HashMap<Integer, Integer>();
-			if (activityRecordList != null) {
-				List activityRecordCompleteList = new ArrayList<>();
-				int j = 0;
-				int i = 1;
-				for (PHCSMP_Activity_Record Activity_Record : activityRecordList) {
-					int activityRecordComplete = (int) (Activity_Record
-							.getFill_record()
-							/ (float) Activity_Record.getTotal_record() * 100);
-					completeMap.put(j, activityRecordComplete);
-					activityRecordCompleteList.add(activityRecordComplete);
-					request.setAttribute("activityRecordCompleteList",
-							activityRecordCompleteList);
-					j++;
-					if (activityRecordComplete != 100) {// 信息不完整
-						sb.append("询问讯问" + i + "信息填写不完整!  ");
-						i++;
-					}
-				}
-				for (Map.Entry<Integer, Integer> entry : completeMap.entrySet()) {
-					System.out.println("Key = " + entry.getKey() + ", Value = "
-							+ entry.getValue());
-				}
-			} else {
-				sb.append("该嫌疑人并未进行询问讯问操作!  ");
+			for (Map.Entry<Integer, Integer> entry : completeMap.entrySet()) {
+				log.info("Key = " + entry.getKey() + ", Value = "
+						+ entry.getValue());
 			}
-			request.setAttribute("activityRecordList", activityRecordList);
-			// 判断是否出区返回
-			
-			//查询以往出区记录
-			List<Temporary_Leave> temporaryLeaveList=temporaryLeaveService.findTempLeaveListBySuspectID(suspectId);
-			// 向前台放置一些dic表信息
-			List<PHCSMP_Dic_Leaving_Reason> leaveReason = dicService
-					.findLeaveReason();
-			List<PHCSMP_Dic_Keeping_Way> keepingWay = dicService
-					.findKeepingWay();
-			List<PHCSMP_Dic_Treatment_Method> treatmentMethod = dicService
-					.findTreatmentMethod();
-			request.setAttribute("leaveReason", leaveReason);
-			request.setAttribute("keepingWay", keepingWay);
-			request.setAttribute("treatmentMethod", treatmentMethod);
-			request.setAttribute("pastList", temporaryLeaveList);
-			// 维护进出门的标志位
-			suspectService.updateSwitch(1, suspectId);
+		} else {
+			sb.append("该嫌疑人并未进行询问讯问操作!  ");
+		}
+		request.setAttribute("activityRecordList", activityRecordList);
+		// 判断是否出区返回
 
-			// 判断进度条
-			if (personalCheck != null) {
-				request.setAttribute("personalCheck", personalCheck);
-			}
-			if (informationCollection != null) {
-				request.setAttribute("informationCollection",
-						informationCollection);
-			}
-			if (activityRecordList.size() != 0) {
-				request.setAttribute("activityRecord", activityRecordList);
-			}
-			request.setAttribute("sb", sb);
-			request.setAttribute("suspectInfor", suspectInfor);
-			List<PHCSMP_Staff> staff = userService.findAllStaffs();
-			request.setAttribute("staff", staff);
-			System.out.println("+++++++++++++++====" + staff.get(0));
-			temporaryLeave = temporaryLeaveService
-					.IsTemporaryLeaveReturn(suspectId);
-System.out.println(temporaryLeave+"---------------------------------------------temporaryLeave");
-			request.setAttribute("temporaryLeave", temporaryLeave);
-			if(staffIdisEmpty()!=0){
-			request.setAttribute("staff_ID", temporaryLeave.getReturn_staff_ID());
-			}
-			return "WEB-INF/jsp/recordInfor/leave";
-//		} catch (Exception e) {
-//			// 异常处理
-//			// response.getWriter()
-//			// .write("<script type='text/javascript'>alert('加载失败，可能是房间或读卡设备配置错误，修改配置后刷新页面');</script>");
-//			// response.getWriter().flush();
-//			// 转到
-//			return "redirect:/home/index";
-//		}
+		// 查询以往出区记录
+		List<Temporary_Leave> temporaryLeaveList = temporaryLeaveService
+				.findTempLeaveListBySuspectID(suspectId);
+		// 向前台放置一些dic表信息
+		List<PHCSMP_Dic_Leaving_Reason> leaveReason = dicService
+				.findLeaveReason();
+		List<PHCSMP_Dic_Keeping_Way> keepingWay = dicService.findKeepingWay();
+		List<PHCSMP_Dic_Treatment_Method> treatmentMethod = dicService
+				.findTreatmentMethod();
+		request.setAttribute("leaveReason", leaveReason);
+		request.setAttribute("keepingWay", keepingWay);
+		request.setAttribute("treatmentMethod", treatmentMethod);
+		request.setAttribute("pastList", temporaryLeaveList);
+		// 维护进出门的标志位
+		suspectService.updateSwitch(1, suspectId);
+
+		// 判断进度条
+		if (personalCheck != null) {
+			request.setAttribute("personalCheck", personalCheck);
+		}
+		if (informationCollection != null) {
+			request.setAttribute("informationCollection", informationCollection);
+		}
+		if (activityRecordList.size() != 0) {
+			request.setAttribute("activityRecord", activityRecordList);
+		}
+		request.setAttribute("sb", sb);
+		request.setAttribute("suspectInfor", suspectInfor);
+		List<PHCSMP_Staff> staff = userService.findAllStaffs();
+		request.setAttribute("staff", staff);
+		log.info("+++++++++++++++====" + staff.get(0));
+		temporaryLeave = temporaryLeaveService
+				.IsTemporaryLeaveReturn(suspectId);
+		log.info(temporaryLeave
+				+ "---------------------------------------------temporaryLeave");
+		request.setAttribute("temporaryLeave", temporaryLeave);
+		if (staffIdisEmpty() != 0) {
+			request.setAttribute("staff_ID",
+					temporaryLeave.getReturn_staff_ID());
+		}
+		return "WEB-INF/jsp/recordInfor/leave";
+		// } catch (Exception e) {
+		// // 异常处理
+		// // response.getWriter()
+		// //
+		// .write("<script type='text/javascript'>alert('加载失败，可能是房间或读卡设备配置错误，修改配置后刷新页面');</script>");
+		// // response.getWriter().flush();
+		// // 转到
+		// return "redirect:/home/index";
+		// }
 	}
-	//判断staffId是否为空
-	private int staffIdisEmpty(){
+
+	// 判断staffId是否为空
+	private int staffIdisEmpty() {
 		try {
 			return temporaryLeave.getReturn_staff_ID();
 		} catch (Exception e) {
 			return 0;
 		}
 	}
+
 	// 未登录状态时
 	public String unlogin_load() {
 		return "unlogin_load";

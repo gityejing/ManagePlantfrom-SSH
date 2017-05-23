@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import com.haifeiWu.service.CardReaderService;
 @RequestMapping("/CardReaderManage")
 @Scope("prototype")
 public class CardReaderManageAction {
+	private Logger log = Logger.getLogger(CardReaderManageAction.class);
 	@Autowired
 	private CardReaderService cardReaderService;
 
@@ -26,24 +28,34 @@ public class CardReaderManageAction {
 			@RequestParam List<String> cardReader_Name,
 			@RequestParam List<Integer> cardReader_Type,
 			HttpServletRequest request) {
-		// System.out.println("++++++++++++++进入函数+++++++++++++++++++++++++++++++");
+		// log.info("++++++++++++++进入函数+++++++++++++++++++++++++++++++");
 
-		for (int i = 0; i < cardReader_ID.size(); i++) {
+		try {
+			for (int i = 0; i < cardReader_ID.size(); i++) {
 
-			cardReaderService.update(cardReader_Name.get(i),
-					cardReader_Type.get(i), cardReader_ID.get(i));
+				cardReaderService.update(cardReader_Name.get(i),
+						cardReader_Type.get(i), cardReader_ID.get(i));
 
+			}
+
+			return loadInfor(request);
+		} catch (Exception e) {
+			log.info("CardReaderManage updateCardReader" + e.getStackTrace());
+			return "null";
 		}
-
-		return loadInfor(request);
 	}
 
 	@RequestMapping(value = "/loadInfor")
 	public String loadInfor(HttpServletRequest request) {
-		List<PHCSMP_CardReader> cardReaderList = cardReaderService
-				.findAllCardReader();
-		request.setAttribute("cardReaderlist", cardReaderList);
-		return "WEB-INF/jsp/devicesManage/cardReader";
+		try {
+			List<PHCSMP_CardReader> cardReaderList = cardReaderService
+					.findAllCardReader();
+			request.setAttribute("cardReaderlist", cardReaderList);
+			return "WEB-INF/jsp/devicesManage/cardReader";
+		} catch (Exception e) {
+			log.info("CardReaderManage loadInfor" + e.getStackTrace());
+			return "null";
+		}
 	}
 
 }

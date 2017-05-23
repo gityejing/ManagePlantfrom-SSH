@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.haifeiWu.dao.SuspectDao;
 import com.haifeiWu.entity.PHCSMP_Dic_Action_Cause;
 import com.haifeiWu.entity.PHCSMP_Dic_IdentifyCard_Type;
-import com.haifeiWu.entity.PHCSMP_LogInfo;
 import com.haifeiWu.entity.PHCSMP_Suspect;
 import com.haifeiWu.service.SuspectService;
 import com.haifeiWu.utils.PageBean;
@@ -24,8 +23,7 @@ public class SuspectServiceImple implements SuspectService {
 
 	@Autowired
 	private SuspectDao suspectDao;
-	
-	
+
 	/**
 	 * 通过身份证查询嫌疑人信息
 	 * */
@@ -33,14 +31,14 @@ public class SuspectServiceImple implements SuspectService {
 	public PHCSMP_Suspect findByidentifyCard_Number(String identifyCard_Number) {
 		return suspectDao.findByidentifyCard_Number(identifyCard_Number);
 	}
-	
+
 	/**
 	 * 视频编号放入嫌疑人表中的vedio_Number列中
 	 * */
 	@Override
 	public void updatevedio_Number(String vedio_Number, String suspectId) {
 		String hql = "update PHCSMP_Suspect s set s.vedio_Number=? where s.suspect_ID=?";
-		suspectDao.update(hql, vedio_Number, suspectId);		
+		suspectDao.update(hql, vedio_Number, suspectId);
 	}
 
 	@Override
@@ -53,7 +51,6 @@ public class SuspectServiceImple implements SuspectService {
 		return suspectDao.findByBandId(bandId);
 	}
 
-	
 	@Override
 	public PHCSMP_Suspect findByRoomID(int roomId) {
 		return suspectDao.findByRoomID(roomId);
@@ -164,7 +161,8 @@ public class SuspectServiceImple implements SuspectService {
 	public void updateIs_RecordVideo_DownLoad(int is_RecordVideo_DownLoad,
 			int bandID, String identifyCard_Number) {
 		String hql = "update PHCSMP_Suspect s set s.is_RecordVideo_DownLoad=? where s.band_ID=? and s.identifyCard_Number=?";
-		suspectDao.update(hql, is_RecordVideo_DownLoad,bandID,identifyCard_Number);
+		suspectDao.update(hql, is_RecordVideo_DownLoad, bandID,
+				identifyCard_Number);
 	}
 
 	@Override
@@ -191,7 +189,7 @@ public class SuspectServiceImple implements SuspectService {
 		String hql = "update PHCSMP_Suspect s set s.detain_Time=? where s.suspect_ID=?";
 		suspectDao.update(hql, hours, suspectID);
 	}
-	
+
 	/**
 	 * 历史嫌疑人分页显示 pageSize为每页显示的记录数 page为当前页页码
 	 */
@@ -221,11 +219,12 @@ public class SuspectServiceImple implements SuspectService {
 	}
 
 	@Override
-	public void updateIs_filename_DownLoad(int i, int policeId,
-			String identificationCard) {
-		String hql = "update PHCSMP_Suspect s set s.is_RecordVideo_DownLoad=? where s.staff_ID=? and s.identifyCard_Number=?";
-		suspectDao.update(hql, i,policeId,identificationCard);
-		
+	public void uploadSuccess(String fileName, int is_RecordVideo_DownLoad,
+			int bandId, String identificationCard) {
+		// TODO Auto-generated method stub
+		String hql = "update PHCSMP_Suspect s set s.vedio_Number=? , s.is_RecordVideo_DownLoad=? where s.band_ID=? and s.identifyCard_Number=?";
+		suspectDao.update(hql, fileName, is_RecordVideo_DownLoad, bandId,
+				identificationCard);
 	}
 
 	/**
@@ -241,6 +240,7 @@ public class SuspectServiceImple implements SuspectService {
 		return suspectDao.getLeavePoliceSuspect(staff_ID);
 	}
 	
+
 	// @Override
 	// public PHCSMP_Suspect findByRemark(String remark) {
 	// // TODO Auto-generated method stub

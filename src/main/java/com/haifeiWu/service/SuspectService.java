@@ -14,26 +14,26 @@ import com.haifeiWu.utils.PageBean;
  * @d2016年8月14日
  */
 public interface SuspectService {
-	
-	
+
 	/**
 	 * 通过身份证查询嫌疑人信息
 	 * */
 	public PHCSMP_Suspect findByidentifyCard_Number(String identifyCard_Number);
+
 	/**
 	 * 视频编号放入嫌疑人表中的vedio_Number列中
 	 * */
-	public void updatevedio_Number(String vedio_Number,String suspectId);
+	public void updatevedio_Number(String vedio_Number, String suspectId);
 
-
-	
 	/**
 	 * 历史嫌疑人分页显示
+	 * 
 	 * @param pageSize
 	 * @param page
 	 * @return
 	 */
 	public PageBean getPageBean(int pageSize, int page);
+
 	/**
 	 * 保存嫌疑人信息到数据库
 	 * 
@@ -127,9 +127,13 @@ public interface SuspectService {
 	public List<PHCSMP_Suspect> findAllByIsRecordVedio();
 
 	public void updateDetainTime(String detain_Time, String suspectID);
-	public void updateIs_filename_DownLoad(int i, int policeId,
-			String identificationCard);
+
 	public List<PHCSMP_Suspect> getOnPoliceSuspecttoStaff(int staff_ID);
 	public List<PHCSMP_Suspect> getLeavePoliceSuspecttoStaff(int staff_ID);
+
+
+	public void uploadSuccess(String fileName, int is_RecordVideo_DownLoad,
+			int bandId, String identificationCard);
+
 
 }

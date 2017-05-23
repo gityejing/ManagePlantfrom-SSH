@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -37,7 +38,7 @@ import com.haifeiWu.utils.CompleteCheck;
 @Scope("prototype")
 public class Information_Collection_Action {
 	private static final long serialVersionUID = 1L;
-
+	private Logger log = Logger.getLogger(Information_Collection_Action.class);
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -46,7 +47,7 @@ public class Information_Collection_Action {
 	private SuspectService suspectService;
 	@Autowired
 	private ActivityRecordService activityRecordService;
-	
+
 	@Autowired
 	private LeaveRecodService leaveRecodService;
 	@Autowired
@@ -57,37 +58,37 @@ public class Information_Collection_Action {
 
 	// 保存信息
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addInformationCollection(
-			PHCSMP_Information_Collection model,
-			HttpServletRequest request) throws IOException, ClassNotFoundException {
-		
+	public String addInformationCollection(PHCSMP_Information_Collection model,
+			HttpServletRequest request) throws IOException,
+			ClassNotFoundException {
+
 		try {
 			// 维护进出门的标志位
 			int roomId = roomService.findbyIp(request.getRemoteAddr())
 					.getRoom_ID();
-				int staff_ID =Integer.parseInt(request
-					.getParameter("staff_ID"));
+			int staff_ID = Integer.parseInt(request.getParameter("staff_ID"));
 			String suspectId = model.getSuspect_ID();
-		request.setAttribute("suspectId", suspectId);
+			request.setAttribute("suspectId", suspectId);
 			if (model != null) {
 				model.setIc_EndTime(new DateTime().toString("yyyy-mm-dd HH:mm"));
 				model.setRoom_ID(roomId);
 				model.setStaff_ID(staff_ID);
-				
+
 				request.setAttribute("staff_ID", staff_ID);
-				fullCheck(model,request);
+				fullCheck(model, request);
 				PHCSMP_Information_Collection old = informationCollectionService
 						.findInforBySuspetcId(suspectId);
 				if (old != null) {// 删除
 					informationCollectionService.deleteInforCollect(old);
 				}
-				request.setAttribute("collected_Item", model.getCollected_Item());
-				
-//				// 插入
+				request.setAttribute("collected_Item",
+						model.getCollected_Item());
+
+				// // 插入
 				informationCollectionService.saveCollectionInfor(model);
-				
+
 			}
-			return "redirect:/home/index";	
+			return "redirect:/home/index";
 		} catch (Exception e) {
 			// response.getWriter().write("<script>alert('提交失败，请重新提交');</script>");
 			// response.getWriter().flush();
@@ -151,8 +152,8 @@ public class Information_Collection_Action {
 
 	}
 
-	private void fullCheck(PHCSMP_Information_Collection model,HttpServletRequest request)
-			throws ClassNotFoundException {
+	private void fullCheck(PHCSMP_Information_Collection model,
+			HttpServletRequest request) throws ClassNotFoundException {
 		Class<?> c = Class.forName(PHCSMP_Information_Collection.class
 				.getName());
 
@@ -163,9 +164,9 @@ public class Information_Collection_Action {
 		int complete = (int) ((fieldsNumber - count - 2 - 1)
 				/ (float) (fieldsNumber - 3) * 100);
 		request.setAttribute("complete", complete);
-		System.out.println("未填写的字段：" + count);
-		System.out.println("总字段：" + (fieldsNumber - 3));
-		System.out.println("房间号：" + model.getRoom_ID());
+		log.info("未填写的字段：" + count);
+		log.info("总字段：" + (fieldsNumber - 3));
+		log.info("房间号：" + model.getRoom_ID());
 	}
 
 }

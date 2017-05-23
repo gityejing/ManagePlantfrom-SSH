@@ -48,7 +48,7 @@ public class PHCSMP_Suspect_Action {
 	 * UUID
 	 */
 	private static final long serialVersionUID = -5503195229207984964L;
-	private Logger log = Logger.getLogger(UserAction.class);
+	private Logger log = Logger.getLogger(PHCSMP_Suspect_Action.class);
 	@Autowired
 	private SuspectService suspectService;
 	@Autowired
@@ -153,7 +153,7 @@ public class PHCSMP_Suspect_Action {
 			 * request.setAttribute("staff", staff);
 			 * 
 			 * for (PHCSMP_Staff phcsmp_Staff : staff) {
-			 * System.out.println(phcsmp_Staff.toString()); }
+			 * log.info(phcsmp_Staff.toString()); }
 			 */
 		} catch (Exception e) {
 			// response.getWriter().write("<script> alert('信息加载失败!'); </script>");
@@ -207,10 +207,10 @@ public class PHCSMP_Suspect_Action {
 				model.setRecordVideo_State(0);
 				request.setAttribute("videoStetus", "0");
 			}
-			fullCheck(model,request);
-			//设置入区流程号
+			fullCheck(model, request);
+			// 设置入区流程号
 			model.setProcess_Now(6);
-			//将suspected_Cause交给日志接收
+			// 将suspected_Cause交给日志接收
 			request.setAttribute("suspected_Cause", model.getSuspected_Cause());
 			request.setAttribute("roomid", model.getRoom_Now());
 			request.setAttribute("suspectId", model.getSuspect_ID());
@@ -235,22 +235,22 @@ public class PHCSMP_Suspect_Action {
 		}
 	}
 
-	private void fullCheck(PHCSMP_Suspect model,HttpServletRequest request) throws ClassNotFoundException {
+	private void fullCheck(PHCSMP_Suspect model, HttpServletRequest request)
+			throws ClassNotFoundException {
 		Class<?> c = Class.forName(PHCSMP_Suspect.class.getName());
 		int count = CompleteCheck.IsEqualsNull(model, c);// 获取model对象不为空的字段的个数
 		// 返回实体类中总字段数
 		model.setFill_record(27 - count + 2);// 填的+
 		// 设置已填写的字段数，，，4应该是除去主键、FillRecord、TotalRecord/羁押时间
 		model.setTotal_record(27);// 设置应填写的字段
-		int complete_degree = (int) (27 - count + 2
-				/ (float) 27 * 100);
+		int complete_degree = (int) (27 - count + 2 / (float) 27 * 100);
 		request.setAttribute("complete_degree", complete_degree);
 
 	}
 
 	// public String updateInfor() {
-	// System.out.println("档案编号：" + request.getParameter("Suspect_ID"));
-	// System.out.println("updateInfor：修改嫌疑人信息！");
+	// log.info("档案编号：" + request.getParameter("Suspect_ID"));
+	// log.info("updateInfor：修改嫌疑人信息！");
 	// return "updateInfor";
 	// }
 

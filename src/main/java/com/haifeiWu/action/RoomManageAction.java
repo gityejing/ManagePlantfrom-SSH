@@ -7,11 +7,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.haifeiWu.entity.PHCSMP_Room;
 import com.haifeiWu.entity.RoomList;
@@ -34,6 +34,7 @@ public class RoomManageAction {
 	protected HttpServletRequest request;
 	protected HttpServletResponse response;
 	protected ServletContext application;
+	private Logger log = Logger.getLogger(RoomManageAction.class);
 
 	private String query;
 	private String room_ID;
@@ -54,7 +55,7 @@ public class RoomManageAction {
 	 */
 	@RequestMapping(value = "/load")
 	public String RM_loadInfor(HttpServletRequest request) {
-		System.out.println("查找所有的房间信息");
+		log.info("查找所有的房间信息");
 		// 获取所有房间的信息
 		List<PHCSMP_Room> roomCheckInfo = roomService.findAllRoom();
 		if (roomCheckInfo == null) {
@@ -62,50 +63,55 @@ public class RoomManageAction {
 		} else {
 			request.setAttribute("roomCheckInfo", roomCheckInfo);
 			for (PHCSMP_Room phcsmp_Room : roomCheckInfo) {
-				System.out.println(phcsmp_Room.toString());
+				log.info(phcsmp_Room.toString());
 			}
-			
+
 			return "/WEB-INF/jsp/roommanage/room";
 		}
 
 	}
+
 	/**
 	 * 房间初始化
 	 */
 	@RequestMapping(value = "/updateRoom")
-	public String updateRoom(RoomList roomList,HttpServletRequest request){
-		System.out.println("进入房间初始化方法");
-		for(PHCSMP_Room pHCSMP_Room :roomList.getRoomList()){
-			System.out.println(pHCSMP_Room.getRoom_ID());
-			System.out.println(pHCSMP_Room.getRoom_Name());
-			System.out.println(pHCSMP_Room.getCardReader_ID());
-			System.out.println(pHCSMP_Room.getRoom_IPAddress());
-			//roomService.updateprocess_IDById(pHCSMP_Room.getCardReader_ID(), pHCSMP_Room.getRoom_ID(), pHCSMP_Room.getRoom_IPAddress());
-			roomService.updateRoomByRoomId(pHCSMP_Room.getRoom_ID(), pHCSMP_Room.getRoom_Name(), pHCSMP_Room.getCardReader_ID(), pHCSMP_Room.getRoom_IPAddress());
+	public String updateRoom(RoomList roomList, HttpServletRequest request) {
+		log.info("进入房间初始化方法");
+		for (PHCSMP_Room pHCSMP_Room : roomList.getRoomList()) {
+			log.info(pHCSMP_Room.getRoom_ID());
+			log.info(pHCSMP_Room.getRoom_Name());
+			log.info(pHCSMP_Room.getCardReader_ID());
+			log.info(pHCSMP_Room.getRoom_IPAddress());
+			// roomService.updateprocess_IDById(pHCSMP_Room.getCardReader_ID(),
+			// pHCSMP_Room.getRoom_ID(), pHCSMP_Room.getRoom_IPAddress());
+			roomService.updateRoomByRoomId(pHCSMP_Room.getRoom_ID(),
+					pHCSMP_Room.getRoom_Name(), pHCSMP_Room.getCardReader_ID(),
+					pHCSMP_Room.getRoom_IPAddress());
 		}
-		
+
 		return RM_loadInfor(request);
 	}
+
 	/**
 	 * 按条件查找房间信息
 	 */
 	public String loadInforByRoomId() {
 		List<PHCSMP_Room> roomCheckInfo = new ArrayList<>();
 		try {
-			System.out.println("按ID查找");
+			log.info("按ID查找");
 			int roomId = 0;
 			// String query = request.getParameter("query");
-			System.out.println("q" + query);
+			log.info("q" + query);
 			if (query != "") {
 				roomId = Integer.parseInt(query);
 			}
-			System.out.println("r" + roomId);
+			log.info("r" + roomId);
 			roomCheckInfo = roomService.findListByRoomID(roomId);
 			if (roomCheckInfo.get(0) == null) {
 				return "NULL";// 处理空的情况
 			} else {
 				request.setAttribute("roomCheckInfo", roomCheckInfo);
-				System.out.println(roomCheckInfo);
+				log.info(roomCheckInfo);
 
 				return "loadInfor";
 			}
@@ -121,17 +127,17 @@ public class RoomManageAction {
 
 	public String loadInforByCardReaderID() {
 		try {
-			System.out.println("按设备ID查找");
-			System.out.println("q" + query);
+			log.info("按设备ID查找");
+			log.info("q" + query);
 			int roomId = Integer.parseInt(query);
-			System.out.println("r" + roomId);
+			log.info("r" + roomId);
 			List<PHCSMP_Room> roomCheckInfo = roomService
 					.findListByCardReaderID(roomId);
 			if (roomCheckInfo.get(0) == null) {
 				return "NULL";// 处理空的情况
 			} else {
 				request.setAttribute("roomCheckInfo", roomCheckInfo);
-				System.out.println(roomCheckInfo);
+				log.info(roomCheckInfo);
 
 				return "loadInfor";
 			}
@@ -145,16 +151,16 @@ public class RoomManageAction {
 	//
 	public String loadInforByIp() {
 		try {
-			System.out.println("按Ip查找");
-			System.out.println("q" + query);
+			log.info("按Ip查找");
+			log.info("q" + query);
 			String roomId = query;
-			System.out.println("r" + roomId);
+			log.info("r" + roomId);
 			List<PHCSMP_Room> roomCheckInfo = roomService.findListbyIp(roomId);
 			if (roomCheckInfo.get(0) == null) {
 				return "NULL";// 处理空的情况
 			} else {
 				request.setAttribute("roomCheckInfo", roomCheckInfo);
-				System.out.println(roomCheckInfo);
+				log.info(roomCheckInfo);
 
 				return "loadInfor";
 			}
@@ -174,7 +180,7 @@ public class RoomManageAction {
 			int roomid = Integer.parseInt(room_ID);
 			PHCSMP_Room room = roomService.findByRoomID(roomid);
 			request.setAttribute("room", room);
-			System.out.println(room);
+			log.info(room);
 			return "update";
 		} catch (Exception e) {
 			request.setAttribute("result", "服务器错误，未能显示！");
@@ -189,14 +195,13 @@ public class RoomManageAction {
 	public String tobatchUpdate() {
 		try {
 			request.setAttribute("roomIdList", roomIdList);
-			System.out.println("s" + roomIdList);
+			log.info("s" + roomIdList);
 			return "batchupdate";
 		} catch (Exception e) {
 			request.setAttribute("result", "服务器出错，页面跳转失败！");
 			return "error";
 		}
 	}
-
 
 	/*
 	 * setter getter

@@ -1,6 +1,7 @@
 package com.haifeiWu.action;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.haifeiWu.dto.ShowStaff;
+import com.haifeiWu.entity.PHCSMP_Role;
 import com.haifeiWu.entity.PHCSMP_Staff;
+import com.haifeiWu.service.RoleService;
 import com.haifeiWu.service.UserService;
 
 /**
@@ -33,10 +37,12 @@ public class UserAction {
 	/**
 	 * Logger的输出地是控制台，此对象只用来调试，具体的日志添加在日志过滤器中完成
 	 */
-	private Logger logger = Logger.getLogger(UserAction.class);
+	private Logger log = Logger.getLogger(UserAction.class);
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private RoleService roleService;
 
 	/**
 	 * 用户登录功能的实现
@@ -46,7 +52,7 @@ public class UserAction {
 			HttpServletResponse response) {
 		try {
 
-			logger.debug("----------" + staff.toString());
+			log.info("----------" + staff.toString());
 			PHCSMP_Staff user = null;
 			if (userService.findUserByStaffNameAndPwd(staff.getStaff_Name(),
 					staff.getPassWord()) != null) {
@@ -76,8 +82,17 @@ public class UserAction {
 	@SuppressWarnings("unused")
 	@RequestMapping(value = "/load")
 	public String loadInfor(HttpServletRequest request) {
-		List<PHCSMP_Staff> userCheckInfo = userService.findAllStaffs();
-		request.setAttribute("userCheckInfo", userCheckInfo);
+		List<PHCSMP_Staff> users = userService.findAllStaffs();
+		List<ShowStaff> staffs = new ArrayList<ShowStaff>();
+		// 将user信息封装然后显示
+		for (PHCSMP_Staff user : users) {
+			ShowStaff staff = new ShowStaff(user.getStaff_ID(),
+					user.getStaff_Name(), user.getReal_Name(), user.getSex(),
+					roleService.findByRoleId(user.getRole_Id()).getRole_Name(),
+					user.getEmail(), user.getPhone(), user.getMobile());
+			staffs.add(staff);
+		}
+		request.setAttribute("userCheckInfo", staffs);
 		return "WEB-INF/jsp/rolemanage/staffManage";
 	}
 
@@ -87,9 +102,13 @@ public class UserAction {
 	@RequestMapping(value = "/adduser")
 	public String addUser(HttpServletRequest request) {
 		List<PHCSMP_Staff> staff = null;
+
 		request.setAttribute("staff", staff);
+		// 查询角色，
+		List<PHCSMP_Role> roles = roleService.findAll();
+		request.setAttribute("roles", roles);
 		// findAllRole(request, null);
-		return "WEB-INF/jsp/rolemanage/RoleEdit";
+		return "WEB-INF/jsp/rolemanage/editStaff";
 	}
 
 	/**
@@ -98,7 +117,7 @@ public class UserAction {
 	@SuppressWarnings("unused")
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String saveUser(PHCSMP_Staff model, HttpServletRequest request) {
-		System.out.println("添加用户信息");
+		log.info("添加用户信息");
 		//
 		// model.setRegistedDate(new DateTime().toString("yyyy-MM-dd HH:mm"));
 		// model.setIs_FirstLogin("是");
@@ -115,21 +134,10 @@ public class UserAction {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	@RequestMapping(value = "/updateuser")
+	@RequestMapping(value = "/commitUpdate")
 	public String updateUser(PHCSMP_Staff model, HttpServletRequest request) {
-		System.out.println("修改用户信息-------------------");
-
-		Integer id = Integer.valueOf(request.getParameter("staff_ID"));
-		System.out.println(id + "-------------");
-
-		/*
-		 * Integer id = model.getStaff_ID(); System.out.println(id +
-		 * "-------------------------");
-		 */
-		userService.deleteByStaffId(id);
-		// System.out.println(model.getStaff_ID() + model.getStaff_Name()
-		// + model.getDuties_Name() + model.getMobile());
-		/* userService.updateStaff(model); */
+		// Integer id = Integer.valueOf(request.getParameter("staff_ID"));
+		userService.deleteByStaffId(model.getStaff_ID());
 		userService.saveStaff(model);
 		return "redirect:/user/load";
 
@@ -138,15 +146,20 @@ public class UserAction {
 	@RequestMapping(value = "/update")
 	public String update(HttpServletRequest request) {
 
-		// Integer id=Integer.valueOf(request.getParameter("staff_ID"));
-		String name = request.getParameter("staff_Name");
-		System.out.println("准备修改---------------" + name);
-		List<PHCSMP_Staff> staff = userService.findStaff("Staff_Name", name);
-		request.setAttribute("staff", staff);
-		for (PHCSMP_Staff phcsmp_Staff : staff) {
-			System.out.println(phcsmp_Staff.toString());
-		}
-		return "WEB-INF/jsp/rolemanage/RoleEdit";
+		Integer staff_ID = Integer.valueOf(request.getParameter("staff_ID"));
+		request.setAttribute("staff", userService.findStaffById(staff_ID));
+		// 查询角色，
+		List<PHCSMP_Role> roles = roleService.findAll();
+		request.setAttribute("roles", roles);
+
+		// String name = request.getParameter("staff_Id");
+		// log.info("准备修改---------------" + name);
+		// List<PHCSMP_Staff> staff = userService.findStaff("Staff_Name", name);
+		// request.setAttribute("staff", staff);
+		// for (PHCSMP_Staff phcsmp_Staff : staff) {
+		// log.info(phcsmp_Staff.toString());
+		// }
+		return "WEB-INF/jsp/rolemanage/updatetStaff";
 
 	}
 
@@ -173,11 +186,11 @@ public class UserAction {
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public String deleteUser(HttpServletRequest request) {
 		String staffId = request.getParameter("id");
-		System.out.println("staffId" + staffId);
+		log.info("staffId" + staffId);
 
 		int id = Integer.parseInt(staffId);
 		userService.deleteByStaffId(id);
-		System.out.println("删除成功");
+		log.info("删除成功");
 		return "WEB-INF/jsp/rolemanage/staffManage";
 	}
 
@@ -191,9 +204,9 @@ public class UserAction {
 	public String findStaff(HttpServletRequest request) {
 		String key = request.getParameter("key");
 		String val = request.getParameter("val");
-		System.out.println("key=" + key + " " + "val=" + val);
+		log.info("key=" + key + " " + "val=" + val);
 		List<PHCSMP_Staff> list = userService.findStaff(key, val);
-		System.out.println("hql语句正确");
+		log.info("hql语句正确");
 
 		request.setAttribute("userCheckInfo", list);
 		return "WEB-INF/jsp/rolemanage/staffManage";
@@ -204,11 +217,11 @@ public class UserAction {
 	 */
 	// public List<PHCSMP_Role> findAllRole(HttpServletRequest request,
 	// HttpServletResponse response) {
-	// System.out.println("查找所有的职务");
+	// log.info("查找所有的职务");
 	// // 获取所有职务
 	// List<PHCSMP_Role> role = userService.findAllRole();
 	// for (PHCSMP_Role phcsmp_Role : role) {
-	// System.out.println(phcsmp_Role.toString());
+	// log.info(phcsmp_Role.toString());
 	// }
 	// request.setAttribute("role", role);
 	// return role;
