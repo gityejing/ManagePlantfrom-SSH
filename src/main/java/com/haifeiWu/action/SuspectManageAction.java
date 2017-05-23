@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,8 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.haifeiWu.entity.PHCSMP_Staff;
 import com.haifeiWu.entity.PHCSMP_Suspect;
 import com.haifeiWu.service.ActivityRecordService;
 import com.haifeiWu.service.BelongingInforService;
@@ -31,6 +34,7 @@ import com.haifeiWu.service.PersonalCheckService;
 import com.haifeiWu.service.RoomService;
 import com.haifeiWu.service.SuspectService;
 import com.haifeiWu.service.TemporaryLeaveService;
+import com.haifeiWu.service.UserService;
 import com.haifeiWu.utils.PageBean;
 import com.haifeiWu.utils.PropertiesReadUtils;
 import com.haifeiWu.utils.Video;
@@ -67,6 +71,8 @@ public class SuspectManageAction {
 	@Autowired
 	private TemporaryLeaveService temporaryLeaveService;
 
+	@Autowired
+	private UserService userService;
 	/**
 	 * 加载嫌疑人信息
 	 * 
@@ -358,6 +364,92 @@ public class SuspectManageAction {
 		return "WEB-INF/jsp/suspectmanage/historySuspectInforList";
 	}
 
+	/**
+	 * 对应警员嫌疑人信息加载
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/suspecttosStaffload")
+	public String suspecttosStaffload(HttpServletRequest request) {
+		/* System.out.println("历史记录，待办信息"); */
+		//获取当时查询人员及办案人员的id;
+		int staff_ID = 0;
+		if(request.getSession().getAttribute("user")!=null){
+			PHCSMP_Staff user = (PHCSMP_Staff) request.getSession().getAttribute("user");
+			staff_ID = user.getStaff_ID();
+			String staffName = user.getStaff_Name();
+			request.setAttribute("staffName", staffName);
+		}else{
+			String loginError = "登录超时，请重新登录！";
+			 request.setAttribute("loginError", loginError);
+			 return "WEB-INF/jsp/suspectmanage/relogin";
+		}
+		
+		// 获取待查嫌疑人信息
+		List<PHCSMP_Suspect> suspectCheckInfor = suspectService
+				.getOnPoliceSuspecttoStaff(staff_ID);
+		// 获取出区嫌疑人数据
+		List<PHCSMP_Suspect> suspectCheckedInfor = suspectService
+				.getLeavePoliceSuspecttoStaff(staff_ID);
+		// System.out.println("----------待查的" + suspectCheckInfor);
+		// System.out.println("----------历史的----" + suspectCheckedInfor);
+		List<String> roomnameList = new ArrayList<String>();
+		// List<PHCSMP_Leave_Record>
+		// if ((suspectCheckInfor == null) || (suspectCheckedInfor == null)) {
+		// return "/jsp/error/null";
+		// }
+		// 将信息放入到request中
+		if ((suspectCheckInfor != null))
+			request.setAttribute("suspectCheckInfor", suspectCheckInfor);
+		if (suspectCheckedInfor != null)
+			request.setAttribute("suspectCheckedInfor", suspectCheckedInfor);
+
+		// for (PHCSMP_Suspect phcsmp_Suspect : suspectCheckedInfor) {
+		// System.err.println(phcsmp_Suspect.toString());
+		// }
+		for (PHCSMP_Suspect phcsmp_Suspect : suspectCheckInfor) {
+			roomnameList.add(roomService.findByRoomID(
+					phcsmp_Suspect.getRoom_Now()).getRoom_Name());
+		}
+
+		// 获取房间名
+		request.setAttribute("roomNameList", roomnameList);
+		// getDistanceTime(suspectCheckedInfor., suspectCheckedInfor.get(14));
+		return "WEB-INF/jsp/suspectmanage/suspecttoStaff";
+
+	}
+	
+	/**
+	 * 登录超时重新登录
+	 * @param request
+	 * @param fileName
+	 * @return
+	 */
+	@RequestMapping(value="/relogin",method = RequestMethod.POST)
+	public String relogin(PHCSMP_Staff staff, HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+
+			PHCSMP_Staff user = null;
+			if (userService.findUserByStaffNameAndPwd(staff.getStaff_Name(),
+					staff.getPassWord()) != null) {
+				user = userService.findUserByStaffNameAndPwd(
+						staff.getStaff_Name(), staff.getPassWord());
+			}
+		
+				// 向客户端输出cookie
+				Cookie cookie = new Cookie("ip", request.getRemoteAddr());
+				cookie.setMaxAge(24 * 60 * 60 * 7);// 七天
+				response.addCookie(cookie);
+				request.getSession().setAttribute("user", user);
+				return "redirect:/suspectManage/suspecttosStaffload";
+			
+		} catch (Exception e) {
+			request.setAttribute("loginError", "用户名或密码不正确！");
+			return "WEB-INF/jsp/login";
+		}
+	}
+	
 	@RequestMapping(value = "/downSucc")
 	public String downSucc(HttpServletRequest request,
 			@RequestParam("fileName") String fileName) {

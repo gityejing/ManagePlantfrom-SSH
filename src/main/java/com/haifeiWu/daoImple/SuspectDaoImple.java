@@ -368,6 +368,36 @@ public int getAllRowCount(String hql) {
 	return allRows;
 }
 
+@Override
+public List<PHCSMP_Suspect> getOnPoliceSuspect(int staff_ID) {
+	session = this.getSession();
+	tx = session.beginTransaction();// 开启事务
+
+	hql = "FROM PHCSMP_Suspect WHERE staff_ID=? and process_Now != -1";
+	Query query = session.createQuery(hql);
+
+	 query.setParameter(0, staff_ID);
+	@SuppressWarnings("unchecked")
+	List<PHCSMP_Suspect> phcsmp_Suspect = query.list();
+
+	tx.commit();// 提交事务
+	return phcsmp_Suspect;
+}
+
+@Override
+public List<PHCSMP_Suspect> getLeavePoliceSuspect(int staff_ID) {
+	session = this.getSession();
+	tx = session.beginTransaction();// 开启事务
+
+	hql = "FROM PHCSMP_Suspect WHERE staff_ID=? and process_Now = -1";
+	Query query = session.createQuery(hql);
+	 query.setParameter(0, staff_ID);
+	@SuppressWarnings("unchecked")
+	List<PHCSMP_Suspect> phcsmp_Suspect = query.list();
+	tx.commit();// 提交事务
+	return phcsmp_Suspect;
+}
+
 	// /**
 	// * 调用DaoSupport中的save即可
 	// */

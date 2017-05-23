@@ -115,6 +115,8 @@ public interface SuspectDao extends DaoSupport<PHCSMP_Suspect> {
 	public List<PHCSMP_Suspect> findAllVideoDownloadFailSuspectInfor();
 
 	public List<PHCSMP_Suspect> findAllByIsRecordVedio();
+	public List<PHCSMP_Suspect> getOnPoliceSuspect(int staff_ID);
+	public List<PHCSMP_Suspect> getLeavePoliceSuspect(int staff_ID);
 
 
 

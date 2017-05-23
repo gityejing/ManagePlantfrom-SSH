@@ -227,6 +227,19 @@ public class SuspectServiceImple implements SuspectService {
 		suspectDao.update(hql, i,policeId,identificationCard);
 		
 	}
+
+	/**
+	 * 根据staffID查询其相关嫌疑人
+	 */
+	@Override
+	public List<PHCSMP_Suspect> getOnPoliceSuspecttoStaff(int staff_ID) {
+		return suspectDao.getOnPoliceSuspect(staff_ID);
+	}
+
+	@Override
+	public List<PHCSMP_Suspect> getLeavePoliceSuspecttoStaff(int staff_ID) {
+		return suspectDao.getLeavePoliceSuspect(staff_ID);
+	}
 	
 	// @Override
 	// public PHCSMP_Suspect findByRemark(String remark) {
