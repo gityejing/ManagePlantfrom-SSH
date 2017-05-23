@@ -128,7 +128,12 @@ public interface SuspectService {
 
 	public void updateDetainTime(String detain_Time, String suspectID);
 
+	public List<PHCSMP_Suspect> getOnPoliceSuspecttoStaff(int staff_ID);
+	public List<PHCSMP_Suspect> getLeavePoliceSuspecttoStaff(int staff_ID);
+
+
 	public void uploadSuccess(String fileName, int is_RecordVideo_DownLoad,
 			int bandId, String identificationCard);
+
 
 }
