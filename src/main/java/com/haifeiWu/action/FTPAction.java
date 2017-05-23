@@ -24,6 +24,19 @@ public class FTPAction {
 		return "success";
 	}
 
+	@RequestMapping(value = "/execption")
+	public String execption(
+			@RequestParam("identificationCard") String identificationCard)
+			throws Exception {
+		Video.setRBServerCfg();
+		Video.setFtpServerCfg(1, identificationCard);
+		Video.uploadRecFile(1, identificationCard);
+		if (true) {
+			throw new NullPointerException();
+		}
+		return "success";
+	}
+
 	// @RequestMapping(value = "/searchFTP")
 	// public String searchFTP() throws Exception {
 	// Video.queryDownloadFileStatu(1, "2423134242432423332");

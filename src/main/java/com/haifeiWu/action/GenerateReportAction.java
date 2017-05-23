@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.aspectj.lang.annotation.Aspect;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ import com.haifeiWu.utils.PropertiesReadUtils;
 @RequestMapping("/report")
 @Scope("prototype")
 public class GenerateReportAction {
+	private Logger log = Logger.getLogger(GenerateReportAction.class);
+
 	protected String detainTime;
 
 	@Autowired
@@ -72,11 +75,12 @@ public class GenerateReportAction {
 	@Autowired
 	private LogService logService; // 日志
 	@Autowired
-	private Dic_ProcessService processService;//流程名
+	private Dic_ProcessService processService;// 流程名
 	@Autowired
-	private StaffService staffService;//办案人员名
+	private StaffService staffService;// 办案人员名
 	@Autowired
 	KeepService keepService;
+
 	/**
 	 * 生成嫌疑人入区信息报告 (杜意权改，嫌疑人报告办离区活动记录模块)
 	 * 
@@ -89,60 +93,60 @@ public class GenerateReportAction {
 		String suspectId = request.getParameter("suspectID");
 		// try {
 		// 查找嫌疑人日志
-		//读取加载嫌疑人日志信息
+		// 读取加载嫌疑人日志信息
 		List<PHCSMP_Process_Log> suspectLog = getLogBysuspectId(suspectId);
 		List<String> processNameList = new ArrayList<String>();
 		List<String> keepNameList = new ArrayList<String>();
-		List<String> staffNameList = new ArrayList<String>(); 
+		List<String> staffNameList = new ArrayList<String>();
 		request.setAttribute("suspectLog", suspectLog);
-		for(PHCSMP_Process_Log suspect : suspectLog){
+		for (PHCSMP_Process_Log suspect : suspectLog) {
 			int process = suspect.getProcess_ID();
 			int staffid = suspect.getStaff_ID();
-			if(staffService.getStaffName(staffid)!=null){
-			String staffName = staffService.getStaffName(staffid);
-			
-			staffNameList.add(staffName);
-			
-			}else{
+			if (staffService.getStaffName(staffid) != null) {
+				String staffName = staffService.getStaffName(staffid);
+
+				staffNameList.add(staffName);
+
+			} else {
 				staffNameList.add(" ");
 			}
-	System.out.println(process+"-----------------------------process");
-			if(processService.getProcessName(process)!=null){
-			String processName =processService.getProcessName(process);
-			processNameList.add(processName);
+			log.info(process + "-----------------------------process");
+			if (processService.getProcessName(process) != null) {
+				String processName = processService.getProcessName(process);
+				processNameList.add(processName);
 			}
-			
+
 		}
 		request.setAttribute("processNameList", processNameList);
 		request.setAttribute("staffNameList", staffNameList);
 		// 查找嫌疑人入区信息
 		PHCSMP_Suspect suspect = suspectService.findBySuspetcId(suspectId);
 
-
 		int suspect_complete_degree = (int) (suspect.getFill_record()
 				/ (float) suspect.getTotal_record() * 100);
-		System.out.println("suspect_complete_degree" + suspect_complete_degree
+		log.info("suspect_complete_degree" + suspect_complete_degree
 				+ "------------------------------------");
 		request.setAttribute("suspect_complete_degree", suspect_complete_degree);
 		// 嫌疑人随身所有物品检查信息s
 
 		List<PHCSMP_BelongingS> belongingS = belongingInforService
 				.selectBelongInfor(suspectId);
-		if(belongingS!=null && belongingS.size()!=0){
-		int belongstaffid = belongingS.get(0).getStaff_ID_Belonging();
-		int staffid = Integer.parseInt(belongingS.get(0).getStaff_ID());
-		if(staffService.getStaffName(belongstaffid)!=null){
-			String belongstaffname = staffService.getStaffName(belongstaffid);
-			String  staffname = staffService.getStaffName(staffid);
-			request.setAttribute("belongstaffname", belongstaffname);
-			request.setAttribute("staffname", staffname);
-		}
-//		}
-//		if(belongingS!=null){
-			for(PHCSMP_BelongingS belong: belongingS){
+		if (belongingS != null && belongingS.size() != 0) {
+			int belongstaffid = belongingS.get(0).getStaff_ID_Belonging();
+			int staffid = Integer.parseInt(belongingS.get(0).getStaff_ID());
+			if (staffService.getStaffName(belongstaffid) != null) {
+				String belongstaffname = staffService
+						.getStaffName(belongstaffid);
+				String staffname = staffService.getStaffName(staffid);
+				request.setAttribute("belongstaffname", belongstaffname);
+				request.setAttribute("staffname", staffname);
+			}
+			// }
+			// if(belongingS!=null){
+			for (PHCSMP_BelongingS belong : belongingS) {
 				int keepid = Integer.parseInt(belong.getKeeping_ID());
-			String keepname = keepService.getKeepname(keepid);
-			keepNameList.add(keepname);
+				String keepname = keepService.getKeepname(keepid);
+				keepNameList.add(keepname);
 			}
 			request.setAttribute("keepNameList", keepNameList);
 		}
@@ -151,7 +155,7 @@ public class GenerateReportAction {
 		PHCSMP_Personal_Check personcheck = personalCheckService
 				.findInforBySuspetcId(suspectId);
 		if (personcheck != null) {
-			PHCSMP_Staff staff = userService.finstaffById(Integer
+			PHCSMP_Staff staff = userService.findStaffById(Integer
 					.parseInt(personcheck.getStaff_ID()));
 			String staffname = staff.getStaff_Name();
 			request.setAttribute("staffname", staffname);
@@ -168,7 +172,7 @@ public class GenerateReportAction {
 			int personal_Check_complete_degree = (int) (personal_Check
 					.getFill_record()
 					/ (float) personal_Check.getTotal_record() * 100);
-			System.out.println("personal_Check_complete_degree"
+			log.info("personal_Check_complete_degree"
 					+ personal_Check_complete_degree
 					+ "------------------------------------");
 			request.setAttribute("personal_Check_complete_degree",
@@ -193,7 +197,7 @@ public class GenerateReportAction {
 			int information_Collection_complete_degree = (int) (information_Collection
 					.getFill_record()
 					/ (float) information_Collection.getTotal_record() * 100);
-			System.out.println("information_Collection_complete_degree"
+			log.info("information_Collection_complete_degree"
 					+ information_Collection_complete_degree
 					+ "------------------------------------");
 			request.setAttribute("information_Collection_complete_degree",

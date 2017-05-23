@@ -41,31 +41,33 @@
 						<td width="110px" text-align="right"><span>用户名 :</span></td>
 						<td  style="padding-top: 12px;width: 200px;"><input id="name" type="text" name="Staff_Name"
 							placeholder="Your UserName" /></td>
-						<td width="140px"><span>职务 :</span></td>
+						<td width="140px"><span>角色 :</span></td>
 						<td style="padding-top: 12px;width: 200px;">
-							<select name="Duties_Name" id="type_ID">
+							<select name="role_Id" id="type_ID">
 								<option >--------请选择角色-------</option>
-								<c:forEach items="${role }" var="item" varStatus="status">
-									<option value="${item.role_Name }">${item.role_Name }</option>
+								<c:forEach items="${roles }" var="item" varStatus="status">
+									<option value="${item.role_ID }">${item.role_Name }</option>
 								</c:forEach>
 						</select>
 						</td>
 					</tr>
 					<tr>
-						<td><span>真实姓名:</span></td>
-						<td style="padding-top: 12px;width: 200px;"><input id="name" type="text" name="real_Name"
-							placeholder="Your Full Name" /></td>
+						<td><span>密码:</span></td>
+						<td style="padding-top: 12px;width: 200px;"><input id="name" type="text" name="PassWord"
+							placeholder="Your password" /></td>
+						
 						<td><span>性别 :</span></td>
 						<td style="padding-top: 12px;width: 200px;"><input id="name" type="text" name="Sex"
 							placeholder="Your Sex"/></td>
 					</tr>
 					<tr>
+						<td><span>真实姓名:</span></td>
+						<td style="padding-top: 12px;width: 200px;"><input id="name" type="text" name="real_Name"
+							placeholder="Your Full Name" /></td>
 						<td><span>邮箱 :</span></td>
 						<td style="padding-top: 12px;width: 200px;"><input id="email" type="text" name="Email"
 							placeholder="Valid Email Address" /></td>
-						<td><span>注册日期 :</span></td>
-						<td style="padding-top: 12px;width: 200px;"><input id="name" type="text" name="RegistedDate"
-							placeholder="Registration Date" /></td>
+						
 					</tr>
 					<tr>
 						<td><span>固定电话 :</span></td>
@@ -79,19 +81,18 @@
 						<td><span>是否离职 :</span></td>
 						<td style="padding-top: 12px;width: 200px;">
 							<select name="is_leave" id="Is_Dimission">
-								<option >-------请选择-------</option>
-								<option >是</option>
+								<option>-------请选择-------</option>
+								<option>是</option>
 								<option>否</option>
 						</select>
 						</td>
-						<!-- <td width="140px"><span>权限 :</span></td>
-						<td style="padding-top: 12px;width: 200px;">
-							<select name="role_ID" id="role_Name">
-								<option >-------请选择------</option>
-								<option >是</option>
-								<option>否</option>
-						</select>
-						</td> -->
+						
+						<td><span>注册日期 :</span></td>
+						<td style="padding-top: 12px;width: 200px;"><input id="name" type="text" name="RegistedDate"
+							placeholder="Registration Date" /></td>
+						
+						
+						
 					</tr>
 					<tr>
 						<td><span>&nbsp;</span></td>

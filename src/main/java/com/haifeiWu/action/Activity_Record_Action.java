@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,8 @@ public class Activity_Record_Action {
 	 * 
 	 */
 	private static final long serialVersionUID = 1201107017949225716L;
+
+	private Logger log = Logger.getLogger(Activity_Record_Action.class);
 	@Autowired
 	private RoomService roomService;
 	@Autowired
@@ -71,12 +74,10 @@ public class Activity_Record_Action {
 	@Autowired
 	private LogService logService; // 日志
 	@Autowired
-	private Dic_ProcessService processService;//流程名
+	private Dic_ProcessService processService;// 流程名
 	@Autowired
-	private StaffService staffService;//办案人员名
-	
-	
-	
+	private StaffService staffService;// 办案人员名
+
 	// 活动记录表list，用于前台提交的多个数据
 
 	/**
@@ -117,7 +118,7 @@ public class Activity_Record_Action {
 			activity.setStaff_ID(staff_ID);
 			request.setAttribute("staff_ID", staff_ID);
 			fullCheck(activity);
-			//将询问记录交给日志
+			// 将询问记录交给日志
 			request.setAttribute("remark", activity.getRemark());
 			String activity_Record = request.getParameter("activity_Record");
 			request.setAttribute("activity_Record", activity_Record);
@@ -126,6 +127,7 @@ public class Activity_Record_Action {
 			// 提示成功
 			return "redirect:/home/index";
 		} catch (Exception e) {
+			log.info("activity add" + e.getStackTrace());
 			// 提示失败
 			// response.getWriter()
 			// .write("<script type='text/javascript'>alert('提交失败，请重新提交');</script>");
@@ -161,9 +163,8 @@ public class Activity_Record_Action {
 	 */
 	@RequestMapping(value = "/load", method = RequestMethod.GET)
 	public String AR_loadInfor(HttpServletRequest request,
-			@RequestParam("suspectID") String suspectId) throws IOException {
-		// suspectId = "LB-HB-201703115";
-//		try {
+			@RequestParam("suspectID") String suspectId) {
+		try {
 			// 提交失败时将信息再次显示
 			if (request.getAttribute("activity_remark") != null) {
 				String activity_remark = (String) request
@@ -173,7 +174,7 @@ public class Activity_Record_Action {
 				request.setAttribute("activity_remark", activity_remark);
 				request.setAttribute("activity_Record", activity_Record);
 			}
-			System.out.println("进入活动记录");
+			log.info("进入活动记录");
 			// 维护进出门的标志位
 			int roomId = roomService.findbyIp(request.getRemoteAddr())
 					.getRoom_ID();
@@ -185,30 +186,31 @@ public class Activity_Record_Action {
 					/ (float) suspectInfor.getTotal_record() * 100);
 			request.setAttribute("complete_degree", complete_degree);
 			request.setAttribute("SuspectInfor", suspectInfor);
-			//读取加载嫌疑人日志信息
+			// 读取加载嫌疑人日志信息
 			List<PHCSMP_Process_Log> suspectLog = getLogBysuspectId(suspectId);
 			List<String> processNameList = new ArrayList<String>();
-			List<String> staffNameList = new ArrayList<String>(); 
+			List<String> staffNameList = new ArrayList<String>();
 			request.setAttribute("suspectLog", suspectLog);
-			for(PHCSMP_Process_Log suspect : suspectLog){
+			for (PHCSMP_Process_Log suspect : suspectLog) {
 				int process = suspect.getProcess_ID();
 				int staffid = suspect.getStaff_ID();
-				if(staffService.getStaffName(staffid)!=null){
-				String staffName = staffService.getStaffName(staffid);
-				staffNameList.add(staffName);
-				}else{
+				if (staffService.getStaffName(staffid) != null) {
+					String staffName = staffService.getStaffName(staffid);
+					staffNameList.add(staffName);
+				} else {
 					staffNameList.add(" ");
 				}
-		System.out.println(process+"------------------------------------------------------process");
-				if(processService.getProcessName(process)!=null){
-					String processName =processService.getProcessName(process);
+				log.info(process
+						+ "------------------------------------------------------process");
+				if (processService.getProcessName(process) != null) {
+					String processName = processService.getProcessName(process);
 					processNameList.add(processName);
 				}
-				
+
 			}
 			request.setAttribute("processNameList", processNameList);
 			request.setAttribute("staffNameList", staffNameList);
-			
+
 			// 人身安全检查
 			PHCSMP_Personal_Check personal_Check = personalCheckService
 					.findInforBySuspetcId(suspectId);
@@ -279,16 +281,12 @@ public class Activity_Record_Action {
 			// 维护进出门状态
 			suspectService.updateSwitch(1, suspectId);
 			return "WEB-INF/jsp/recordInfor/activity";
-//		} catch (Exception e) {
-//			// response.getWriter()
-//			// .write("<script type='text/javascript'>alert('当前房间存在多个嫌疑人，可能是上一个嫌疑人出门时未刷卡（请保证进门和出门时成对刷卡），也可能是房间信息不正确');</script>");
-//			// response.getWriter().flush();
-//			request.setAttribute("error", "error");
-//			return "redirect:/load";
-//		}
+		} catch (Exception e) {
+			log.info("activity load" + e.getStackTrace());
+			return "null";
+		}
 	}
 
-	
 	/**
 	 * 按suspectId查询嫌疑人日志
 	 * 

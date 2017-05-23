@@ -18,7 +18,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <meta http-equiv="description" content="This is my page">
 <!-- <link rel="stylesheet" href="css/bootstrap.min.css" />
 <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css"> -->
-<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath }/css/bootstrap.min.css">
 <%-- <script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery.min.js"></script> --%>
 </head>
 
@@ -66,6 +66,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	</c:if>
 	
 </div>	
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath }/js/jquery.min.js"></script>
 </body>
 </html>

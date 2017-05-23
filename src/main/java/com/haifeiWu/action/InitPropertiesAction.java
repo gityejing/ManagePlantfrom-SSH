@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import com.haifeiWu.utils.PropertiesWriteUtils;
 @Scope("prototype")
 @RequestMapping("/properties")
 public class InitPropertiesAction {
+	private Logger log = Logger.getLogger(InitPropertiesAction.class);
 
 	@RequestMapping(value = "/load")
 	public String load(HttpServletRequest request) {
@@ -35,7 +37,7 @@ public class InitPropertiesAction {
 			if (flag != null && flag.equals("\\")) {
 				title = PropertiesWriteUtils.ascii2Native(title);
 				name = PropertiesWriteUtils.ascii2Native(name);
-				System.out.println(title + "...." + name);
+				log.info(title + "...." + name);
 			}
 			request.setAttribute("name", name);
 			request.setAttribute("title", title);
@@ -54,7 +56,7 @@ public class InitPropertiesAction {
 			// 派出所系统信息初始化的Map
 			String title = request.getParameter("title");
 			String name = request.getParameter("name");
-			// System.out.println("====从前台获得的title======"+title);
+			// log.info("====从前台获得的title======"+title);
 			Map<String, String> policeTitleMap = new HashMap<String, String>();
 			policeTitleMap.put("title",
 					PropertiesWriteUtils.native2Ascii(title));
@@ -70,7 +72,7 @@ public class InitPropertiesAction {
 			String sourcePath = "http://" + serverIp + ":" + serverPort
 					+ "/ManagePlantfrom-SSH/report/load?suspectID=";
 			String relatePath = request.getParameter("relatePath");
-			System.out.println("====从前台获得的PDF:toolPath======" + toolPath);
+			log.info("====从前台获得的PDF:toolPath======" + toolPath);
 			Map<String, String> pdfMap = new HashMap<String, String>();
 			pdfMap.put("toolPath", toolPath);
 			pdfMap.put("sourcePath", sourcePath);
@@ -92,7 +94,7 @@ public class InitPropertiesAction {
 			String remoteServerIP = request.getParameter("recordIp");
 			String remoteServerPort = request.getParameter("recordPort");
 
-			System.out.println("====前台传来的录播器IP:" + remoteServerIP);
+			log.info("====前台传来的录播器IP:" + remoteServerIP);
 			Map<String, String> RecordDeviceMap = new HashMap<String, String>();
 			RecordDeviceMap.put("remoteServerIP", remoteServerIP);
 			RecordDeviceMap.put("remoteServerPort", remoteServerPort);
@@ -147,7 +149,7 @@ public class InitPropertiesAction {
 
 			remoteServerIP = PropertiesReadUtils
 					.getRecordConfString("remoteServerIP");
-			System.out.println("=====写入了录播器remoteServerIP:" + remoteServerIP);
+			log.info("=====写入了录播器remoteServerIP:" + remoteServerIP);
 			/*
 			 * //WebSocket信息初始化 String
 			 * webSocket=(String)request.getParameter("webSocket");

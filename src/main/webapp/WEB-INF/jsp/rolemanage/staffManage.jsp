@@ -102,7 +102,7 @@ $(function(){
 							<td>${u.staff_Name }</td>
 							<td>${u.real_Name }</td>
 							<td>${u.sex }</td>
-							<td>${u.role_Id }</td>
+							<td>${u.role_Name }</td>
 
 							<td>${u.email }</td>
 							<td>${u.phone }</td>
@@ -110,7 +110,7 @@ $(function(){
 							<td><a class="text-danger glyphicon glyphicon-remove"
 								 val="${u.staff_ID }"></a> <a
 								class="text-success glyphicon glyphicon-refresh"
-								href="${pageContext.request.contextPath }/user/update?staff_Name=${u.staff_Name }"></a></td>
+								href="${pageContext.request.contextPath }/user/update?staff_ID=${u.staff_ID }"></a></td>
 						</tr>
 					</c:forEach>
 			</table>

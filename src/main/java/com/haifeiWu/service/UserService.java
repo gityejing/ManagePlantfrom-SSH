@@ -54,5 +54,5 @@ public interface UserService {
 
 	void updateStaff(PHCSMP_Staff model);
 
-	PHCSMP_Staff finstaffById(int staffid);
+	PHCSMP_Staff findStaffById(int staffid);
 }

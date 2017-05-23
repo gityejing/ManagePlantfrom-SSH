@@ -37,7 +37,7 @@ import com.haifeiWu.utils.PropertiesWriteUtils;
 @RequestMapping("/home")
 @Scope("prototype")
 public class HomeAction {
-	private Logger logger = Logger.getLogger(HomeAction.class);
+	private Logger log = Logger.getLogger(HomeAction.class);
 	@Autowired
 	private RoleFunctionService roleFunctionService;
 	@Autowired
@@ -53,7 +53,7 @@ public class HomeAction {
 		if (flag != null && flag.equals("\\")) {
 			title = PropertiesWriteUtils.ascii2Native(title);
 			name = PropertiesWriteUtils.ascii2Native(name);
-			System.out.println(title + "...." + name);
+			log.info(title + "...." + name);
 		}
 		request.setAttribute("title", title);
 		request.setAttribute("name", name);
@@ -104,7 +104,7 @@ public class HomeAction {
 				}
 			}
 		}
-		logger.debug("----------------------------" + groups);
+		log.info("----------------------------" + groups);
 		request.setAttribute("groups", groups);
 		return "WEB-INF/jsp/home/left";
 	}
@@ -112,7 +112,7 @@ public class HomeAction {
 	@RequestMapping(value = "/index")
 	public String index(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		System.out.println("--------进到欢迎页面后台action-----");
+		log.info("--------进到欢迎页面后台action-----");
 		// 向客户端输出cookie
 		Cookie cookie = new Cookie("ip", request.getRemoteAddr());
 		cookie.setMaxAge(24 * 60 * 60 * 7);// 七天
@@ -131,8 +131,8 @@ public class HomeAction {
 				.getRecordConfString("remoteServerIP");
 		String remoteServerPort = PropertiesReadUtils
 				.getRecordConfString("remoteServerPort");
-		System.out.println("-----------------" + remoteServerIP);
-		System.out.println("-----------------" + remoteServerPort);
+		log.info("-----------------" + remoteServerIP);
+		log.info("-----------------" + remoteServerPort);
 		// String webSocket =
 		// PropertiesReadUtils.getRecordConfString("webSocket");
 

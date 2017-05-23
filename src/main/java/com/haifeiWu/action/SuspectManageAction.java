@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -46,7 +47,7 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 @RequestMapping("/suspectManage")
 @Scope("prototype")
 public class SuspectManageAction {
-
+	private Logger log = Logger.getLogger(SuspectManageAction.class);
 	@Autowired
 	private SuspectService suspectService;// 嫌疑人信息管理
 	@Autowired
@@ -75,15 +76,15 @@ public class SuspectManageAction {
 
 	@RequestMapping(value = "/load")
 	public String SM_loadInfor(HttpServletRequest request) {
-		/* System.out.println("历史记录，待办信息"); */
+		/* log.info("历史记录，待办信息"); */
 		// 获取待查嫌疑人信息
 		List<PHCSMP_Suspect> suspectCheckInfor = suspectService
 				.getOnPoliceSuspect();
 		// 获取出区嫌疑人数据
 		List<PHCSMP_Suspect> suspectCheckedInfor = suspectService
 				.getLeavePoliceSuspect();
-		// System.out.println("----------待查的" + suspectCheckInfor);
-		// System.out.println("----------历史的----" + suspectCheckedInfor);
+		// log.info("----------待查的" + suspectCheckInfor);
+		// log.info("----------历史的----" + suspectCheckedInfor);
 		List<String> roomnameList = new ArrayList<String>();
 		// List<PHCSMP_Leave_Record>
 		// if ((suspectCheckInfor == null) || (suspectCheckedInfor == null)) {
@@ -138,20 +139,20 @@ public class SuspectManageAction {
 				// 非数组类型的身份证号查找
 				suspect = suspectService.findByCardId(searchInfor);
 				suspectNow = suspectService.findByCardIdNow(searchInfor);
-				System.out.println("身份证号：" + searchInfor);
+				log.info("身份证号：" + searchInfor);
 				request.setAttribute("suspect", suspect);
 				request.setAttribute("suspectNow", suspectNow);
-				System.out.println(suspect);
+				log.info(suspect);
 			} else {
 				// 根据档案编号查询嫌疑人信息
 				suspect = suspectService.serachInforBySuspectId(searchInfor);
 				suspectNow = suspectService
 						.serachInforBySuspectIdNow(searchInfor);
-				System.out.println("档案编号：" + searchInfor);
+				log.info("档案编号：" + searchInfor);
 				request.setAttribute("suspect", suspect);
 				request.setAttribute("suspectNow", suspectNow);
-				System.out.println(suspect);
-				System.out.println(suspectNow);
+				log.info(suspect);
+				log.info(suspectNow);
 			}
 		}
 		if (result) {
@@ -159,9 +160,9 @@ public class SuspectManageAction {
 			suspectNow = suspectService.finBySuspectNameNow(searchInfor);
 			request.setAttribute("suspect", suspect);
 			request.setAttribute("suspectNow", suspectNow);
-			System.out.println("嫌疑人姓名：" + searchInfor);
-			System.out.println(suspect);
-			System.out.println(suspectNow);
+			log.info("嫌疑人姓名：" + searchInfor);
+			log.info(suspect);
+			log.info(suspectNow);
 		}
 
 		if (suspect.isEmpty()
@@ -188,15 +189,16 @@ public class SuspectManageAction {
 		for (int i = 0; i < suspectList.size(); i++) {
 
 			String suspectId = suspectList.get(i).getSuspect_ID();
-			// System.out.println("suspectId" + suspectId);
-			if(leaveRecodService.findLeaveRecordInfor(suspectId)!=null){
-				String leavaTime = leaveRecodService
-						.findLeaveRecordInfor(suspectId).getLeave_Time();
-				// System.out.println("leavetime=sbsbsb+" + leavaTime);
+			// log.info("suspectId" + suspectId);
+			if (leaveRecodService.findLeaveRecordInfor(suspectId) != null) {
+				String leavaTime = leaveRecodService.findLeaveRecordInfor(
+						suspectId).getLeave_Time();
+				// log.info("leavetime=sbsbsb+" + leavaTime);
 				leaveTimeList.add(leavaTime);
+			} else {
+				leaveTimeList.add(null);
 			}
-			else{leaveTimeList.add(null);}
-			// System.out.println("leavetime=" + leaveTimeList.get(i));
+			// log.info("leavetime=" + leaveTimeList.get(i));
 		}
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
@@ -224,12 +226,12 @@ public class SuspectManageAction {
 	@RequestMapping(value = ("/download"))
 	public String downLoadByHands(HttpServletRequest request) throws Exception {
 		String suspect_ID = request.getParameter("suspect_ID");
-		System.out.println("=============");
-		System.out.println("=-----==" + suspect_ID);
+		log.info("=============");
+		log.info("=-----==" + suspect_ID);
 		PHCSMP_Suspect phcsmp_Suspect = suspectService
 				.findBySuspetcId(suspect_ID);
 
-		// System.out.println("查询到的嫌疑人信息---------------"
+		// log.info("查询到的嫌疑人信息---------------"
 		// + phcsmp_Suspect.toString());
 		try {
 			Video.setRBServerCfg();
@@ -252,12 +254,12 @@ public class SuspectManageAction {
 		for (int i = 0; i < suspectList.size(); i++) {
 
 			String suspectId = suspectList.get(i).getSuspect_ID();
-			// System.out.println("suspectId" + suspectId);
+			// log.info("suspectId" + suspectId);
 			String leavaTime = leaveRecodService
 					.findLeaveRecordInfor(suspectId).getLeave_Time();
-			// System.out.println("leavetime=" + leavaTime);
+			// log.info("leavetime=" + leavaTime);
 			leaveTimeList.add(leavaTime);
-			// System.out.println("leavetime=" + leaveTimeList.get(i));
+			// log.info("leavetime=" + leaveTimeList.get(i));
 		}
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
@@ -306,7 +308,7 @@ public class SuspectManageAction {
 
 			String uploadPath = PropertiesReadUtils
 					.getRecordConfString("uploadDir");
-			System.out.println("===============uploadPath:" + uploadPath);
+			log.info("===============uploadPath:" + uploadPath);
 			String filePath = rootPath + "\\" + "ftp" + uploadPath + "\\"
 					+ vedioName;
 
@@ -344,7 +346,7 @@ public class SuspectManageAction {
 	public String SM_executee(HttpServletRequest request) throws Exception {
 		int page = Integer.parseInt(request.getParameter("page"));
 		// 获取历史嫌疑人数据，在页面显示数量
-		System.out.println("sb--------------------------");
+		log.info("sb--------------------------");
 		List<PHCSMP_Suspect> suspectCheckedInfor = suspectService
 				.getLeavePoliceSuspect();
 		request.setAttribute("suspectCheckedInfor", suspectCheckedInfor);
@@ -361,7 +363,7 @@ public class SuspectManageAction {
 	@RequestMapping(value = "/downSucc")
 	public String downSucc(HttpServletRequest request,
 			@RequestParam("fileName") String fileName) {
-		System.out.println("----------fileName-----" + fileName);
+		log.info("----------fileName-----" + fileName);
 		request.setAttribute("fileName", fileName);
 		return "WEB-INF/jsp/suspectmanage/downSucc";
 	}

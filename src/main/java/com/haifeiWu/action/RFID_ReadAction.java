@@ -2,10 +2,10 @@ package com.haifeiWu.action;
 
 import java.io.IOException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -33,7 +33,7 @@ public class RFID_ReadAction {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static WebSocketUtils ws = new WebSocketUtils();
-
+	private Logger log = Logger.getLogger(RFID_ReadAction.class);
 
 	@Autowired
 	private SuspectService suspectService;
@@ -50,7 +50,8 @@ public class RFID_ReadAction {
 	 * @d2017年4月16日
 	 */
 	@RequestMapping(value = "/readRfid.action")
-	public String readRFID(HttpServletRequest request,HttpServletResponse response) throws IOException {
+	public String readRFID(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
 		/**
 		 * 控制设备发出不同的声音的话，应该在这里做一下应该返回的参数，建议用json格式的数据
 		 * 
@@ -60,21 +61,20 @@ public class RFID_ReadAction {
 		// 获取BandID和CardReader_ID
 		String cardReader_Name = request.getParameter("deviceId");// 设备号
 		String remark = request.getParameter("wristId");
-		// System.out.println(request.getParameter("deviceId")
+		// log.info(request.getParameter("deviceId")
 		// + "-------------------cardReader_Name-----------");
-		// System.out.println(request.getParameter("wristId")
+		// log.info(request.getParameter("wristId")
 		// + "-------------------remark-----------");
 
-		System.out.println(cardReader_Name + "------cardReader_Name------");
-		System.out.println(remark + "--------remark-----------");
+		log.info(cardReader_Name + "------cardReader_Name------");
+		log.info(remark + "--------remark-----------");
 		request.setAttribute("remark", remark);
 		// 通过获取的属性获取嫌疑人当前信息和所在房间的信息
-		System.out.println("bandSer-----------" + bandService);
-		System.out.println("findby------------"
-				+ bandService.findByRemark(remark));
+		log.info("bandSer-----------" + bandService);
+		log.info("findby------------" + bandService.findByRemark(remark));
 		int bandId = bandService.findByRemark(remark).getBand_ID();
 
-		System.out.println("--------" + bandId);
+		log.info("--------" + bandId);
 
 		int cardReader_ID = roomService.findByCardReaderName(cardReader_Name)
 				.getCardReader_ID();
@@ -111,8 +111,7 @@ public class RFID_ReadAction {
 	}
 
 	private void triggerWebsocket(PHCSMP_Room room, String suspectID) {
-		System.out.println("triggerWebsocket---------------suspectID="
-				+ suspectID);
+		log.info("triggerWebsocket---------------suspectID=" + suspectID);
 		// flushpage时传递两个信息，一个是IP，另一个是嫌疑人编号，用*作为分割符
 		switch (room.getProcess_ID()) {
 		// case 0:// 0是入区登记，不刷卡以及录像
@@ -165,7 +164,7 @@ public class RFID_ReadAction {
 				if (suspect.getCardReader_Switch() == 1) {
 					repairSwitch(0, suspect.getSuspect_ID());
 				}
-				System.out.println("----------------->调用开始录像的结果：---" + result);
+				log.info("----------------->调用开始录像的结果：---" + result);
 				// update(suspect);
 			} else {// 录像状态2
 				// 房间号有变化或者标志位为0，开始指令
@@ -177,8 +176,7 @@ public class RFID_ReadAction {
 
 					suspectService.updateSuspect(room.getRoom_ID(),
 							room.getProcess_ID(), suspect.getSuspect_ID());
-					System.out.println("----------------->调用重新开始录像的结果：---"
-							+ result);
+					log.info("----------------->调用重新开始录像的结果：---" + result);
 					// 校准录像状态
 					if (suspect.getCardReader_Switch() == 1) {
 						repairSwitch(0, suspect.getSuspect_ID());
@@ -189,8 +187,7 @@ public class RFID_ReadAction {
 							room.getLine_Number(),
 							suspect.getIdentifyCard_Number());
 
-					System.out.println("----------------->调用暂停录像的结果：---"
-							+ result);
+					log.info("----------------->调用暂停录像的结果：---" + result);
 
 				}
 			}

@@ -108,6 +108,10 @@
         <property name="resolveLazily" value="true" />
     </bean> 
     
-   
+    <!--自定义java类，继承SimpleMappingExceptionResolver -->
+	<bean id="exceptionResolver" class="com.haifeiWu.exception.MyException">
+	</bean>
+    
+   	
 
 </beans>
