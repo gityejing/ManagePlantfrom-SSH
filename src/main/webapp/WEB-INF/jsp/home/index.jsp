@@ -15,7 +15,7 @@
      if ('WebSocket' in window) {
 		// alert("${webSocket}");
          //websocket = new WebSocket("${webSocket}"); 
-          websocket = new WebSocket("ws://192.168.1.231:8888/ManagePlantfrom-SSH/websocket");  
+          websocket = new WebSocket("ws://192.168.1.4:8080/ManagePlantfrom-SSH/websocket");  
 
 
      }
@@ -29,7 +29,6 @@
      };
      //连接成功建立的回调方法
      websocket.onopen = function () {
-           alert("WebSocket连接成功"); 
           var ip=getcookie("ip"); 
          if(ip!=null){
          	websocket.send(ip);
