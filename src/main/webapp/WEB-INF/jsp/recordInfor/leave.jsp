@@ -490,14 +490,14 @@
 							</c:forEach>							
 						</select></td>
 					</tr>
-					<tr>
+					<%-- <tr>
 						<td class="td">随身物品处理情况:</td>
 						<td>	
 							<c:forEach items="${keepingWay }" var="v" varStatus="status">
 								<label for="belongingS_Treatment_Method${status.index }" style="font-weight:normal"><input type="radio" id="belongingS_Treatment_Method${status.index }"name="belongingS_Treatment_Method" value="${v.keeping_Name }" class="checkRadio">${v.keeping_Name }</label>
 							</c:forEach>
 						</td>
-					</tr>
+					</tr> --%>
 					<tr>
 						<td style="color:#000 !important;">未反还物品情况记载:</td>						
 						<td style="padding: 8px 0;">

@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : police
+Source Server         : localhost_3306
 Source Server Version : 50553
-Source Host           : localhost:3306
+Source Host           : localhost:3308
 Source Database       : phcsmp
 
 Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2017-05-24 09:21:51
+Date: 2017-06-03 14:33:16
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -304,7 +304,7 @@ CREATE TABLE `phcsmp_dic_process` (
   `process_ID` int(11) NOT NULL AUTO_INCREMENT,
   `process_Name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`process_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of phcsmp_dic_process
@@ -315,7 +315,8 @@ INSERT INTO `phcsmp_dic_process` VALUES ('2', '信息采集');
 INSERT INTO `phcsmp_dic_process` VALUES ('3', '询问讯问');
 INSERT INTO `phcsmp_dic_process` VALUES ('4', '侯问');
 INSERT INTO `phcsmp_dic_process` VALUES ('5', '出区离区登记');
-INSERT INTO `phcsmp_dic_process` VALUES ('8', '其他业务');
+INSERT INTO `phcsmp_dic_process` VALUES ('6', '入区');
+INSERT INTO `phcsmp_dic_process` VALUES ('10', '其他业务');
 
 -- ----------------------------
 -- Table structure for phcsmp_dic_treatment_method
@@ -505,12 +506,12 @@ CREATE TABLE `phcsmp_personal_check` (
 DROP TABLE IF EXISTS `phcsmp_process_log`;
 CREATE TABLE `phcsmp_process_log` (
   `log_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `suspect_ID` varchar(255) NOT NULL,
-  `process_ID` int(11) NOT NULL,
+  `suspect_ID` varchar(255) DEFAULT NULL,
+  `process_ID` int(11) DEFAULT NULL,
   `start_Time` varchar(255) DEFAULT NULL,
   `end_Time` varchar(255) DEFAULT NULL,
   `staff_ID` int(11) DEFAULT NULL,
-  `IP_Address` varchar(255) NOT NULL,
+  `IP_Address` varchar(255) DEFAULT NULL,
   `suspect_active` varchar(255) DEFAULT NULL,
   `roomId` int(11) DEFAULT NULL,
   `suspected_Cause` varchar(255) DEFAULT NULL,
@@ -643,8 +644,8 @@ CREATE TABLE `phcsmp_staff` (
 -- ----------------------------
 -- Records of phcsmp_staff
 -- ----------------------------
-INSERT INTO `phcsmp_staff` VALUES ('1', 'admin', 'admin', null, null, null, null, null, null, null, '1');
-INSERT INTO `phcsmp_staff` VALUES ('2', 'police', 'police', '办案民警', '', '', '', null, '', '', '1');
+INSERT INTO `phcsmp_staff` VALUES ('1', 'admin', 'admin', '超级管理员', null, null, null, null, null, null, '1');
+INSERT INTO `phcsmp_staff` VALUES ('2', 'police', 'police', '办案民警', '', '', '', null, '', '', '2');
 INSERT INTO `phcsmp_staff` VALUES ('3', 'manager', 'manager', '派出所所长', '', '', '', null, '', '', '3');
 
 -- ----------------------------
@@ -655,11 +656,14 @@ CREATE TABLE `phcsmp_staff_in_role` (
   `staff_ID` int(11) NOT NULL AUTO_INCREMENT,
   `role_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`staff_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of phcsmp_staff_in_role
 -- ----------------------------
+INSERT INTO `phcsmp_staff_in_role` VALUES ('1', '1');
+INSERT INTO `phcsmp_staff_in_role` VALUES ('2', '2');
+INSERT INTO `phcsmp_staff_in_role` VALUES ('3', '3');
 
 -- ----------------------------
 -- Table structure for phcsmp_suspect
@@ -682,7 +686,7 @@ CREATE TABLE `phcsmp_suspect` (
   `enter_Time` varchar(20) DEFAULT NULL,
   `staff_ID` varchar(20) DEFAULT NULL,
   `detain_Time` varchar(10) DEFAULT NULL,
-  `vedio_Number` varchar(20) DEFAULT NULL,
+  `vedio_Number` varchar(100) DEFAULT NULL,
   `total_record` int(11) NOT NULL DEFAULT '20',
   `fill_record` int(11) NOT NULL DEFAULT '0',
   `process_Now` int(11) NOT NULL DEFAULT '0',

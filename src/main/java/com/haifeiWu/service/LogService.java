@@ -15,19 +15,35 @@ import com.haifeiWu.utils.PageBean;
 public interface LogService {
 
 	public PageBean getInfoPageBean(int pageSize, int page);
+
 	public PageBean getProcessPageBean(int pageSize, int page);
+
 	public List<PHCSMP_LogInfo> findAllStaffLog();
+
 	public List<PHCSMP_Process_Log> findAllProcessLog();
+
 	public void save(PHCSMP_LogInfo log);
+
 	public void save(PHCSMP_Process_Log process);
+
 	public PHCSMP_Process_Log searchEmpEndTime(String suspectId);
+
 	public void update(PHCSMP_Process_Log process);
-	public PageBean findLogprocess(String param,int pageSize, int page,String hql);
-	public PageBean findLoginfor(String staffName, int i, int page,String hql);
+
+	public PageBean findLogprocess(String param, int pageSize, int page,
+			String hql);
+
+	public PageBean findLoginfor(String staffName, int i, int page, String hql);
+
 	public void updateStaff(PHCSMP_Process_Log process);
+
 	public PHCSMP_Process_Log searchEmpstaff(String suspectId);
+
 	public List<PHCSMP_Process_Log> findlogBysuspect(String suspectId);
+
 	public void updateNew(PHCSMP_Process_Log process);
+
 	PHCSMP_Process_Log searchEmpcomplete(String suspectId);
+
 	public void updateActive(PHCSMP_Process_Log log);
 }

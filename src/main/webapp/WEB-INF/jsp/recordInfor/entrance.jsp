@@ -1,4 +1,4 @@
-
+﻿
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!-- 加载jstl的c标签库 -->
@@ -258,14 +258,13 @@ function Button1_onclick() {
 							</tr>	
 
 							<tr>
-								<td colspan="2" style="border:1px solid #c1c1c1;"><textarea name="address" rows="1" cols="45" class="Adress" ></textarea></td>
+								<td colspan="2" style="border:0px solid #c1c1c1;"><textarea name="address" rows="1" cols="45" class="Adress" ></textarea></td>
 							</tr>
 
 							<tr>
-								<td><div style="margin-left: 4%;">身份证号码</div></td>
-								<td colspan="2"><input type="text"
-									name="identifyCard_Number1" value="" /></td>
-
+								<td><div style="position:relative;left:100%;top:-30px;">身份证号码</div></td>
+								<td colspan="2" rowspan:><input type="text" style="position:relative;top:-30px;left:25%;height:0px;"
+									name="identifyCard_Number1" value=""/></td>
 							</tr>
 						</table>
 						<hr
@@ -273,7 +272,7 @@ function Button1_onclick() {
 					</div>
 					<div
 						style="z-index:1;position:absolute;left:890px;top:330px;width:850px;">
-						<input class="btn" type="button" value="读卡"
+						<input style="position:relative;left:130px;" class="btn" type="button" value="读卡"
 							onclick="return Button1_onclick()" />
 					</div>
 

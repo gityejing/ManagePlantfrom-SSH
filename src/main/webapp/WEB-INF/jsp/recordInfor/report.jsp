@@ -14,7 +14,18 @@
 <script type="text/javascript" src="${pageContext.request.contextPath }/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath }/js/Suspect_All.js"></script>
-
+<script type="text/javascript">
+				window.onload =$(function(){
+					alert("进入   离区");
+					var tt=document.getElementById("alterTime").value;
+					alert("进入   离区"+tt);
+					if(tt=="离区"){
+						alert("进入   离区");
+						document.getElementById("goalTime").value="---";
+					}
+				});
+				
+			</script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		// 数据信息的显示与隐藏
@@ -112,7 +123,7 @@
 </head>
 
 <body>
-	<div class="container">
+	<div class="container" style="position: relative; left: 40px;top: 40px" >
 		<div class="row">
 			<!--嫌疑人入区信息-->
 			<h4 style="margin-top: 13px;">
@@ -140,7 +151,7 @@
 			</form>
 
 			<!-- 日志   "-->
-			
+			<br />
 			<form class="row">
 				<h4 id="Person_info"
 					class="human_Mes col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -160,7 +171,7 @@
 					<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
 						<!--身份证信息-->
 
-						<table class="Message col-lg-12 col-md-10 col-sm-8 col-xs-8">
+						<table class="Message col-lg-12 col-md-10 col-sm-9 col-xs-9">
 							<tr style="padding: 0px;">
 								<!--图片引入-->
 								<td rowspan="5"><img
@@ -169,14 +180,14 @@
 									<p class="info_id">身份证照</p></td>
 								<!--<td></td>-->
 								<td colspan="2">姓名:<input type="text" readonly="readonly"
-									value="${suspect.suspect_Name }" /></td>
+									value="${suspect.suspect_Name }" style="position: relative;left: 10px" /></td>
 							</tr>
 							<!--第二行 性别 民族-->
 							<tr>
 
 								<td>性别：<input style="text-align: center;" type="text"
 									value="${suspect.sex }" readonly="readonly" /></td>
-								<td>民族：<input type="text" value="汉" readonly="readonly" /></td>
+								<td style="width: 84px">民族：<input type="text" value="汉" readonly="readonly" /></td>
 							</tr>
 							<!--第三行 出生-->
 							<tr>
@@ -184,19 +195,20 @@
 									value="${suspect.birthday }" readonly="readonly" />
 								</td>
 							</tr>
+							<div style="clear: both;"></div>
 							<!--第四行身份证住址-->
-							<tr>
-								<td colspan="2">身份证住址：</td>
+							<tr style="float: left;">
+								<td colspan="2" style="width:90px">身份证住址：</td>
 							</tr>
-							<tr>
-								<!--<td></td>-->
-								<td colspan="2"><textarea readonly="readonly" rows="1"
-										cols="30">${suspect.address }</textarea></td>
+							<tr style="float: left;position: relative;left: 46px;top: -12px;width: 250px">
+								<td colspan="2" ><textarea readonly="readonly" rows="1"
+										cols="30" style="position: relative;left: 30px;">${suspect.address }</textarea></td>
 							</tr>
+							<div style="clear: both;"></div>
 							<tr>
-								<td><div style="margin-left: 50px;">身份证号码</div></td>
-								<td colspan="2"><input type="text"
-									style="margin-left: 15px;"
+								<td><div>身份证号码：</div></td>
+								<td colspan="2" style="position: relative;left: -171px;" ><input type="text" class="M2"
+									style="margin-left: 15px;width:320% !important;"
 									value="${suspect.identifyCard_Number }" readonly="readonly" /></td>
 							</tr>
 						</table>
@@ -222,9 +234,9 @@
 							</tr>
 							<tr>
 								<td style="text-align: center;">办案民警签名：</td>
-								<td colspan="4">${suspect.staff_ID }</td>
+								<td colspan="4">${enterstaffName }</td>
 								<td style="text-align: center;">管理员签名：</td>
-								<td colspan="4">${suspect.staff_ID }</td>
+								<td colspan="4">${enterstaffName }</td>
 							</tr>
 
 							<tr>
@@ -261,12 +273,13 @@
 					class="human_Mes col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					2、人身安全检查 <!-- <span class="show1">显示信息</span> -->
 				</h4>
-				<div id="All_second">
+				
+				<div id="All_second" style="position: relative;left: 17px;top: 12px;">
 					<div class="row_1">
 						<p class="self_state col-lg-12 col-md-10 col-sm-10"
-							style="font-size: 17px;">2.1&nbsp;自述情况</p>
+							style="font-size: 17px;width: 133.883px;margin-top: 46px;">2.1&nbsp;自述情况</p>
 						<table class="checked_state col-lg-12 col-md-10 col-sm-10"
-							style="margin-top: 6px;margin-left: 56px;">
+							style="margin-top: 6px;margin-left: 50px;">
 							<tr><td>
 							<table style="width: 600px;table-layout:fixed;">
 							<tr>
@@ -295,7 +308,7 @@
 
 					<div class="row_2" style="width: 100%;">
 						<p class="check col-lg-12 col-md-10 col-sm-10"
-							style="font-size: 17px;">2.2&nbsp;检查情况</p>
+							style="font-size: 17px;width: 175.1px">2.2&nbsp;检查情况</p>
 						<!--体检信息表-->
 						<table class="checked_state col-lg-12 col-md-10 col-sm-10" s>
 							<tr>
@@ -310,12 +323,12 @@
 									style="padding-left: 127px;width:200px; vertical-align: top;font-size: 16px;">检查情况：</td>
 								<td
 									style="text-align: left; vertical-align: top; font-size: 16px;"
-									rea><div style="overflow:auto; width: 60%;height: 110px;border: 1px solid;word-wrap: break-word; word-break: normal;
+									rea><div style="overflow:auto; width: 60%;height: 110px;word-wrap: break-word; word-break: normal;
 									">${personal_Check.check_ReportS }</div></td>
 							</tr>
 							<tr>
 								<td
-									style="padding-left:72px;font-size: 16px;padding-top: 5px;width:26%;">被检查人/监护人：
+									style="padding-left:72px;font-size: 16px;padding-top: 5px;width:223px;">被检查人/监护人：
 								</td>
 								<td style="font-size: 16px;">${suspect.suspect_Name }</td>
 								<!--<td></td>-->
@@ -324,7 +337,7 @@
 						<img src="${pageContext.request.contextPath }/images/check_08.png"
 							style="width:24%;position:relative;left: 650px;top:-195px;" />
 					</div>
-					<br>
+					<br /><div style="height:35px;"></div>
 
 
 
@@ -332,9 +345,12 @@
 					<!--随身财物检查登记-->
 
 					<div class="row_1" style="margin-top: -245px;">
+					<div style="height: 78px">
 						<p class="check_woods col-lg-12 col-md-10 col-sm-10"
 							style="font-size: 17px;">2.3&nbsp;随身财物检查登记</p>
+					</div>
 						<div>
+						
 							<%-- <c:if test="${empty belongingS }">
 
 								<p
@@ -342,7 +358,7 @@
 								<!-- <div style="margin-left: 12px;margin-top: 45px;">该嫌疑人无随身财物检查登记记录</div> -->
 							</c:if>
 							<c:if test="${!empty belongingS }"> --%>
-							<table class="woods_check col-lg-12 col-md-10 col-sm-10">
+							<table class="woods_check col-lg-12 col-md-10 col-sm-10" style="width: 824px;position: relative;left: -23px">
 								<tr>
 									<td>序号</td>
 									<td>物品名称及特征</td>
@@ -392,6 +408,9 @@
 
 				</div>
 			</form>
+			<br />
+			<div style="height:35px;"></div>
+			<br />
 			<!--信息采集报告-->
 			<form class="row">
 				<h4 id="Info_Collect"
@@ -405,7 +424,7 @@
 					</c:if>
 					<c:if test="${!empty information_Collection }"> --%>
 					
-					<table class="final_Leave col-lg-12 col-md-10 col-sm-10" style="width: 825px;position: relative;left: 50px;margin-top: 25px;height:50px;">
+					<table class="final_Leave col-lg-12 col-md-10 col-sm-10" style="width: 823px;position: relative;left: 50px;margin-top: 25px;height:50px;">
 								<tr>
 
 									<td style="text-align: center;">信息采集</td>
@@ -425,10 +444,14 @@
 					
 				</div>
 			</form>
+			
+			<br />
+			<div style="height:35px;"></div>
+			<br />
 			<!--办案区活动记录-->
-			<form class="row">
+			<form class="row" >
 				<h4 id="record_registr"
-					class="human_Mes col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					class="human_Mes col-lg-12 col-md-12 col-sm-12 col-xs-12" style="top:50px !important;">
 					4、办案区活动记录<!-- <span class="show3">显示信息</span> -->
 				</h4>
 				<div id="All_forth">
@@ -438,7 +461,7 @@
 							style="position: relative;left: 89px;top:23px;width: 41%;color: #f00">该嫌疑人无办案区活动记录</div>
 					</c:if>
 					<c:if test="${!empty activity_Record }"> --%>
-					<table class="active_check col-lg-12 col-md-10 col-sm-10" style="table-layout:fixed;width: 980px;position: relative;left: -63px;">
+					<table class="active_check col-lg-12 col-md-10 col-sm-10" style="table-layout:fixed;width: 823px;position: relative;left: -2px;">
 							<tr>
 						<td>序号</td>				
 						<td>活动记录</td>
@@ -447,15 +470,16 @@
 						<td>结束时间</td>
 						<td>完整性</td>	
 						<td>办案人员</td>	
-						<td style="width: 347px">备注</td>
+						<td style="width: 245px">备注</td>
 					</tr>
 				<tr>
 				<c:forEach items="${suspectLog }" var="item" varStatus="list">
 						<tr style="height: 48px;">
 							<td>${list.index+1}</td>
-							<td>${item.suspect_active }</td> 
+							<td id="alterTime">${item.suspect_active }</td>
+							 
 							<td>${processNameList[list.index] }</td>
-							<td>${item.start_Time }</td>
+							<td id="goalTime">${item.start_Time }</td>
 							<td>${item.end_Time }</td>
 							<c:choose>
 								<c:when test="${item.complete ne 0 &&item.complete ne -1 }">
@@ -501,7 +525,7 @@
 						</c:if>
 							<c:if test="${!empty temporaryLeaves }"> --%>
 					<!-- <div class="table1" style="width: 0px;height: 0px;"> -->
-						<table class="transient_Leave col-lg-12 col-md-10 col-sm-10">
+						<table class="transient_Leave col-lg-12 col-md-10 col-sm-10" style="width: 823px;position: relative;left: 44px;">
 							<tr>
 								<td>序号</td>
 								<td>临时离开时间</td>
@@ -540,7 +564,7 @@
 						<p
 							style="color: #389AC7;margin-top: 9%;margin-left:6%;font-size: 17px;position: relative;left: -44px;">最终离开办案区</p>
 						<div>
-							<table class="final_Leave col-lg-12 col-md-10 col-sm-10">
+							<table class="final_Leave col-lg-12 col-md-10 col-sm-10" style="width: 823px;position: relative;left: 52px;" >
 								<tr style="background: #0070c0;color: #fff">
 
 									<td style="text-align: center;">最终离开时间</td>
@@ -570,7 +594,7 @@
 						<div style="clear: both;"></div>
 						<div class="downLoad" style="width: 273px;height: 58px;position: relative;left: 267px">
 						<c:if test="${suspect.process_Now == -1}">
-							<a href="${pdfFilePath }" style="margin-left: 36%; margin-top: 10px;position: relative; display: inline-block;background: #D0EEFF;
+							<a href="/pdf/pdf/${suspect.suspect_ID}.pdf" style="margin-left: 36%; margin-top: 10px;position: relative; display: inline-block;background: #D0EEFF;
 								border: 1px solid #99D3F5;border-radius: 4px;padding: 4px 12px;overflow: hidden;color: #1E88C7;text-decoration: none;text-indent: 0;line-height: 20px;left: 45px; "
 							>下载入区报告</a>
 						</c:if>
@@ -587,6 +611,8 @@
 					<div style="height: 100px;"></div>
 				</div>
 			</form>
+			
+			
 		</div>
 	</div>
 </body>

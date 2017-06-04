@@ -67,10 +67,14 @@ public class fileStatusAction {
 			if (uploadType == 0) {
 				String result = Video.queryDownloadFileStatu(bandId,
 						identificationCard);
+				log.info("uploadResult  " + result);
 				String fileName = Video.getSuccessFile(result);
+				log.info("upload fileName   " + fileName);
 				// 将fileName存到数据库
-				suspectService.uploadSuccess(fileName, 1, bandId,
-						identificationCard);
+				if (fileName != "" || !fileName.equals("")) {
+					suspectService.uploadSuccess(fileName, 1, bandId,
+							identificationCard);
+				}
 			}
 			return "success";
 		} catch (Exception e) {

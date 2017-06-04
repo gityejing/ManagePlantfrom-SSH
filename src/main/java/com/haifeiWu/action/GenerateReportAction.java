@@ -1,4 +1,4 @@
-package com.haifeiWu.action;
+﻿package com.haifeiWu.action;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -121,6 +121,9 @@ public class GenerateReportAction {
 		request.setAttribute("staffNameList", staffNameList);
 		// 查找嫌疑人入区信息
 		PHCSMP_Suspect suspect = suspectService.findBySuspetcId(suspectId);
+		String enterstaffName = staffService
+				.getStaffName(suspect.getStaff_ID());
+		request.setAttribute("enterstaffName", enterstaffName);
 
 		int suspect_complete_degree = (int) (suspect.getFill_record()
 				/ (float) suspect.getTotal_record() * 100);

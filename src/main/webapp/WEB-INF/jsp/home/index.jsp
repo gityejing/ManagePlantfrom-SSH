@@ -14,8 +14,7 @@
      //判断当前浏览器是否支持WebSocket
      if ('WebSocket' in window) {
 		// alert("${webSocket}");
-         //websocket = new WebSocket("${webSocket}"); 
-          websocket = new WebSocket("ws://192.168.1.4:8080/ManagePlantfrom-SSH/websocket");  
+         websocket = new WebSocket("${webSocket}"); 
 
 
      }

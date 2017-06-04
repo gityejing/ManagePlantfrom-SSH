@@ -225,8 +225,8 @@ public class LogServiceImpl implements LogService {
 
 	@Override
 	public void updateNew(PHCSMP_Process_Log process) {
-		String hql = "update PHCSMP_Process_Log process set process.complete=?,process.suspected_Cause=?,process.suspect_active=?,process.roomId=? where process.log_ID=?";
-		process_logDao.update(hql, process.getComplete(),process.getSuspected_Cause(),process.getSuspect_active(),process.getRoomId(),process.getLog_ID());
+		String hql = "update PHCSMP_Process_Log process set process.start_Time=?,process.complete=?,process.suspected_Cause=?,process.suspect_active=?,process.roomId=? where process.log_ID=?";
+		process_logDao.update(hql,process.getStart_Time(), process.getComplete(),process.getSuspected_Cause(),process.getSuspect_active(),process.getRoomId(),process.getLog_ID());
 	}
 
 	@Override

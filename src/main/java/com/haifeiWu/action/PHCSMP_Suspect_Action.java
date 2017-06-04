@@ -176,7 +176,7 @@ public class PHCSMP_Suspect_Action {
 			@RequestParam("file") MultipartFile file,
 			@RequestParam("sfile") MultipartFile sfile,
 			HttpServletRequest request) throws IOException {
-		log.debug("-------" + model.toString());
+		log.info("-------" + model.toString());
 		boolean useLine = false;// 定义一个标志位，判断是否开启一路回路，便于在异常的时候判断是否需要释放回路
 
 		try {
@@ -243,7 +243,7 @@ public class PHCSMP_Suspect_Action {
 		model.setFill_record(27 - count + 2);// 填的+
 		// 设置已填写的字段数，，，4应该是除去主键、FillRecord、TotalRecord/羁押时间
 		model.setTotal_record(27);// 设置应填写的字段
-		int complete_degree = (int) (27 - count + 2 / (float) 27 * 100);
+		int complete_degree = (int) ((27 - count + 1 )/ (float) 27 * 100);
 		request.setAttribute("complete_degree", complete_degree);
 
 	}

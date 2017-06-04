@@ -74,6 +74,7 @@ public class SuspectManageAction {
 
 	@Autowired
 	private UserService userService;
+
 	/**
 	 * 加载嫌疑人信息
 	 * 
@@ -288,7 +289,7 @@ public class SuspectManageAction {
 
 		// 将path放到前台
 		request.setAttribute("vedioPath",
-				PropertiesReadUtils.getRecordConfString("uploadDir"));
+				PropertiesReadUtils.getRecordConfString("uploadDir"));// vedioFile
 		return "WEB-INF/jsp/suspectmanage/videoDownloadSuccessSuspectList";
 
 	}
@@ -300,6 +301,7 @@ public class SuspectManageAction {
 		response.setContentType("multipart/form-data");// 设置类型
 		response.setHeader("Content-Disposition", "attachment;fileName="
 				+ vedioName); // 设置响应头
+		log.info("vedioName   -----------" + vedioName);
 		try {
 			// 获取服务器根目录
 			String classPath = Thread.currentThread().getContextClassLoader()
@@ -311,13 +313,13 @@ public class SuspectManageAction {
 				rootPath = path.substring(0, path.lastIndexOf("/"));
 				rootPath = rootPath.replace("/", "\\");
 			}
-
+			log.info("rootPath   -----------" + rootPath);
 			String uploadPath = PropertiesReadUtils
 					.getRecordConfString("uploadDir");
 			log.info("===============uploadPath:" + uploadPath);
-			String filePath = rootPath + "\\" + "ftp" + uploadPath + "\\"
+			String filePath = rootPath + "\\" + "ftpVedio" + uploadPath + "\\"
 					+ vedioName;
-
+			log.info("filePath   -----------" + filePath);
 			/* String filePath=rootPath+"\\"+"ftp"+"\\"+vedioName; */
 
 			System.out
@@ -368,25 +370,27 @@ public class SuspectManageAction {
 
 	/**
 	 * 对应警员嫌疑人信息加载
+	 * 
 	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/suspecttosStaffload")
 	public String suspecttosStaffload(HttpServletRequest request) {
 		/* System.out.println("历史记录，待办信息"); */
-		//获取当时查询人员及办案人员的id;
+		// 获取当时查询人员及办案人员的id;
 		int staff_ID = 0;
-		if(request.getSession().getAttribute("user")!=null){
-			PHCSMP_Staff user = (PHCSMP_Staff) request.getSession().getAttribute("user");
+		if (request.getSession().getAttribute("user") != null) {
+			PHCSMP_Staff user = (PHCSMP_Staff) request.getSession()
+					.getAttribute("user");
 			staff_ID = user.getStaff_ID();
 			String staffName = user.getStaff_Name();
 			request.setAttribute("staffName", staffName);
-		}else{
+		} else {
 			String loginError = "登录超时，请重新登录！";
-			 request.setAttribute("loginError", loginError);
-			 return "WEB-INF/jsp/suspectmanage/relogin";
+			request.setAttribute("loginError", loginError);
+			return "WEB-INF/jsp/suspectmanage/relogin";
 		}
-		
+
 		// 获取待查嫌疑人信息
 		List<PHCSMP_Suspect> suspectCheckInfor = suspectService
 				.getOnPoliceSuspecttoStaff(staff_ID);
@@ -420,14 +424,15 @@ public class SuspectManageAction {
 		return "WEB-INF/jsp/suspectmanage/suspecttoStaff";
 
 	}
-	
+
 	/**
 	 * 登录超时重新登录
+	 * 
 	 * @param request
 	 * @param fileName
 	 * @return
 	 */
-	@RequestMapping(value="/relogin",method = RequestMethod.POST)
+	@RequestMapping(value = "/relogin", method = RequestMethod.POST)
 	public String relogin(PHCSMP_Staff staff, HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
@@ -438,20 +443,20 @@ public class SuspectManageAction {
 				user = userService.findUserByStaffNameAndPwd(
 						staff.getStaff_Name(), staff.getPassWord());
 			}
-		
-				// 向客户端输出cookie
-				Cookie cookie = new Cookie("ip", request.getRemoteAddr());
-				cookie.setMaxAge(24 * 60 * 60 * 7);// 七天
-				response.addCookie(cookie);
-				request.getSession().setAttribute("user", user);
-				return "redirect:/suspectManage/suspecttosStaffload";
-			
+
+			// 向客户端输出cookie
+			Cookie cookie = new Cookie("ip", request.getRemoteAddr());
+			cookie.setMaxAge(24 * 60 * 60 * 7);// 七天
+			response.addCookie(cookie);
+			request.getSession().setAttribute("user", user);
+			return "redirect:/suspectManage/suspecttosStaffload";
+
 		} catch (Exception e) {
 			request.setAttribute("loginError", "用户名或密码不正确！");
 			return "WEB-INF/jsp/login";
 		}
 	}
-	
+
 	@RequestMapping(value = "/downSucc")
 	public String downSucc(HttpServletRequest request,
 			@RequestParam("fileName") String fileName) {
@@ -464,8 +469,8 @@ public class SuspectManageAction {
 	public String vedioPlay(@RequestParam("vedioName") String vedioName,
 			HttpServletRequest request) {
 		String uploadDir = PropertiesReadUtils.getRecordConfString("uploadDir");
-		request.setAttribute("vedioPath", uploadDir + "/" + vedioName);
+		request.setAttribute("vedioPath", "/ftpVedio" + uploadDir + "/"
+				+ vedioName);
 		return "WEB-INF/jsp/suspectmanage/vedio";
 	}
-
 }

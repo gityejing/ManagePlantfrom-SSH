@@ -491,9 +491,10 @@
 					</tr> -->
 				</table>
 			</div>
-			<p class="row_1">
+			<br />
+			<div class="row_1">
 				注：1、请办案民警注意对嫌疑人在办案区的活动做详细记录，确保嫌疑人在办案区内无时间盲区的登记遗漏.
-			</p> 
+			</div> 
 			<div style="float:left;width:400px;margin-left: 287px;font-size: 22px;margin-top: 16px;">
 			
 				<p id="signature">
